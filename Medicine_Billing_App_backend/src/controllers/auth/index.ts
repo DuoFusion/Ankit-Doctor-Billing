@@ -8,6 +8,8 @@ import { generateToken } from "../../helper/jwt";
 import bcrypt from "bcryptjs";
 import {AuthRequest} from "../../middleware/auth.middleware"
 
+
+
 /* ================= SIGNUP ================= */
 export const signup = async (req: Request, res: Response) => {
   try {
