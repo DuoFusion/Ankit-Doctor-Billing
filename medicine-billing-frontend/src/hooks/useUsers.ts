@@ -1,0 +1,34 @@
+import { useQuery, useMutation, useQueryClient,   } from "@tanstack/react-query";
+import { getAllUsersApi,updateUserApi  } from "../api/userApi";
+import { useMe } from "./useMe";
+
+export const useUsers = (
+  page: number,
+  limit: number,
+  search: string
+) => {
+  const { data: me } = useMe();
+
+  return useQuery({
+    queryKey: ["users", page, limit, search],
+    queryFn: () =>
+      getAllUsersApi({
+        page,
+        limit,
+        search: search || undefined,
+      }),
+    enabled: me?.role === "ADMIN",
+    placeholderData:(prev) => prev,
+      staleTime: 1000 * 5, 
+  });
+};
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateUserApi,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+};

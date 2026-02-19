@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+.input {
+  @apply w-full px-4 py-2 border rounded-lg focus:outline-none
+  focus:ring-2 focus:ring-cyan-400;
+}
+
+@media print {
+  body {
+   print-color-adjust: exact;          /* ✅ Standard */
+    -webkit-print-color-adjust: exact; /* ✅ Chrome, Safari */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th, td {
+    border: 1px solid black;
+    padding: 6px;
+  }
+}
+
