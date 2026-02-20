@@ -29,7 +29,7 @@ export const useDeleteAccount = () => {
     onSuccess: () => {
       localStorage.removeItem("token");
       queryClient.clear();
-      window.location.href = "/login";
+      window.location.href = "/";
     },
   });
 };

@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Col, Divider, Row, Table, Typography } from "antd";
+import { Button, Card, Col, Divider, Row, Space, Table, Typography } from "antd";
 import { EditOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useBill } from "../../hooks/useBills";
@@ -154,140 +154,182 @@ const BillView = () => {
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "end", marginBottom: 12 }}>
-        <Button
-          icon={<EditOutlined />}
-          onClick={() => id && navigate(ROUTES.BILL_EDIT.replace(":id", id))}
-          style={{ marginRight: 8 }}
-        >
-          Edit Bill
-        </Button>
-        <Button type="primary" icon={<FilePdfOutlined />} onClick={handleDownloadPdf}>
-          Download PDF
-        </Button>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+        <div>
+          <Typography.Title level={4} style={{ margin: 0, color: "#102A43", fontWeight: 700 }}>
+            Invoice Details
+          </Typography.Title>
+          <Typography.Text type="secondary">Professional bill view for medical billing records</Typography.Text>
+        </div>
+        <Space>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => id && navigate(ROUTES.BILL_EDIT.replace(":id", id))}
+          >
+            Edit Bill
+          </Button>
+          <Button type="primary" icon={<FilePdfOutlined />} onClick={handleDownloadPdf}>
+            Download PDF
+          </Button>
+        </Space>
       </div>
 
-      <Card ref={printRef as any} style={{ borderRadius: 14 }}>
-        <Row justify="space-between" align="middle">
-          <Col>
-            <Typography.Text
-              style={{
-                fontSize: 12,
-                letterSpacing: 1,
-                color: "#1E6F5C",
-                fontWeight: 700,
-              }}
-            >
-              TAX INVOICE
-            </Typography.Text>
-          </Col>
-          <Col>
-            <Typography.Text strong>Bill No: {bill.billNo || "-"}</Typography.Text>
-          </Col>
-        </Row>
+      <Card style={{ borderRadius: 14 }} bodyStyle={{ padding: 22 }}>
+        <div
+          ref={printRef}
+          style={{
+            fontFamily: "Inter, Poppins, Roboto, 'Segoe UI', sans-serif",
+            lineHeight: 1.55,
+            letterSpacing: 0.2,
+            color: "#0f172a",
+          }}
+        >
+          <style>{`
+            .invoice-pdf .ant-typography {
+              line-height: 1.55;
+              letter-spacing: 0.2px;
+            }
+            .invoice-pdf .ant-table {
+              font-size: 13px;
+            }
+            .invoice-pdf .ant-table-thead > tr > th {
+              font-weight: 700 !important;
+              font-size: 12.5px;
+              letter-spacing: 0.25px;
+              background: #f8fafc !important;
+              padding-top: 12px !important;
+              padding-bottom: 12px !important;
+            }
+            .invoice-pdf .ant-table-tbody > tr > td {
+              padding-top: 12px !important;
+              padding-bottom: 12px !important;
+            }
+          `}</style>
 
-        <Divider style={{ margin: "12px 0" }} />
-
-        <Row gutter={[16, 16]} align="top">
-          <Col xs={24} md={13}>
-            <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-              {bill.companyId?.logo && (
-                <img
-                  src={getLogoUrl(bill.companyId.logo)}
-                  alt="Company Logo"
-                  style={{ width: 68, height: 68, objectFit: "contain" }}
-                />
-              )}
-              <div>
-                <Typography.Title level={4} style={{ margin: 0, marginBottom: 4 }}>
-                  {companyName}
-                </Typography.Title>
-                <Typography.Text type="secondary">
-                  GST No: {companyGst}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                  Address: {companyAddress}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                  Phone: {companyPhone}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                  Email: {companyEmail}
-                </Typography.Text>
-              </div>
-            </div>
-          </Col>
-          <Col xs={24} md={11}>
+          <div className="invoice-pdf">
             <div
               style={{
-                border: "1px solid #E5E7EB",
-                borderRadius: 10,
-                padding: 12,
-                background: "#FAFAFA",
+                padding: "4px 0 14px",
+                marginBottom: 18,
+                borderBottom: "1px solid #e5e7eb",
               }}
             >
-              <Typography.Text strong>Billing Details</Typography.Text>
-              <div style={{ marginTop: 6 }}>
-                <Typography.Text type="secondary">
-                  Date: {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString() : "-"}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                  Created By: {userName}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                   Email: {userEmail}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                   Phone: {userPhone}
-                </Typography.Text>
-                <br />
-                <Typography.Text type="secondary">
-                   Address: {userAddress}
-                </Typography.Text>
+              <Row justify="space-between" align="middle" gutter={[14, 10]}>
+                <Col xs={24} md={15}>
+                  <Typography.Text
+                    style={{
+                      fontSize: 12.5,
+                      letterSpacing: 1.1,
+                      color: "#1E6F5C",
+                      fontWeight: 700,
+                    }}
+                  >
+                    TAX INVOICE
+                  </Typography.Text>
+                  <Typography.Title level={4} style={{ margin: "6px 0 0", fontWeight: 700 }}>
+                    {companyName}
+                  </Typography.Title>
+                </Col>
+                <Col xs={24} md={9} style={{ textAlign: "right" }}>
+                  <Typography.Text style={{ display: "block", fontSize: 13.5, fontWeight: 600 }}>
+                    Bill No: {bill.billNo || "-"}
+                  </Typography.Text>
+                  <Typography.Text type="secondary">
+                    Date: {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString() : "-"}
+                  </Typography.Text>
+                </Col>
+              </Row>
+            </div>
+
+            <Row gutter={[18, 18]} align="top">
+              <Col xs={24} md={13}>
+                <div
+                  style={{
+                    padding: "2px 0",
+                    minHeight: 130,
+                  }}
+                >
+                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
+                    {bill.companyId?.logo && (
+                      <img
+                        src={getLogoUrl(bill.companyId.logo)}
+                        alt="Company Logo"
+                        style={{ width: 62, height: 62, objectFit: "contain" }}
+                      />
+                    )}
+                    <div>
+                      <Typography.Text style={{ fontWeight: 700, fontSize: 13.5, display: "block", marginBottom: 6 }}>
+                        Company Information
+                      </Typography.Text>
+                      <Typography.Text type="secondary" style={{ display: "block" }}>GST No: {companyGst}</Typography.Text>
+                      <Typography.Text type="secondary" style={{ display: "block" }}>Address: {companyAddress}</Typography.Text>
+                      <Typography.Text type="secondary" style={{ display: "block" }}>Phone: {companyPhone}</Typography.Text>
+                      <Typography.Text type="secondary" style={{ display: "block" }}>Email: {companyEmail}</Typography.Text>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+              <Col xs={24} md={11}>
+                <div
+                  style={{
+                    padding: "2px 0",
+                    minHeight: 130,
+                  }}
+                >
+                  <Typography.Text style={{ fontWeight: 700, fontSize: 13.5, display: "block", marginBottom: 8 }}>
+                    Billing Details
+                  </Typography.Text>
+                  <Typography.Text type="secondary" style={{ display: "block" }}>Created By: {userName}</Typography.Text>
+                  <Typography.Text type="secondary" style={{ display: "block" }}>Email: {userEmail}</Typography.Text>
+                  <Typography.Text type="secondary" style={{ display: "block" }}>Phone: {userPhone}</Typography.Text>
+                  <Typography.Text type="secondary" style={{ display: "block" }}>Address: {userAddress}</Typography.Text>
+                </div>
+              </Col>
+            </Row>
+
+            <Divider style={{ margin: "14px 0 10px" }} />
+
+            <Table
+              style={{ marginTop: 8 }}
+              rowKey="_id"
+              columns={columns}
+              dataSource={items}
+              pagination={false}
+              scroll={{ x: "max-content" }}
+              size="middle"
+              bordered
+            />
+
+            <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+              <div
+                style={{
+                  width: 370,
+                  padding: "2px 0",
+                }}
+              >
+                <Row justify="space-between" style={{ marginBottom: 8 }}>
+                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Sub Total</Typography.Text>
+                  <Typography.Text style={{ fontWeight: 500 }}>Rs {Number(bill.subTotal || 0).toFixed(2)}</Typography.Text>
+                </Row>
+                <Row justify="space-between" style={{ marginBottom: 8 }}>
+                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Total Tax</Typography.Text>
+                  <Typography.Text style={{ fontWeight: 500 }}>Rs {Number(bill.totalTax || 0).toFixed(2)}</Typography.Text>
+                </Row>
+                <Row justify="space-between" style={{ marginBottom: 10 }}>
+                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Discount</Typography.Text>
+                  <Typography.Text style={{ fontWeight: 500 }}>- Rs {Number(bill.discount || 0).toFixed(2)}</Typography.Text>
+                </Row>
+                <Divider style={{ margin: "10px 0 12px" }} />
+                <Row justify="space-between">
+                  <Typography.Title level={4} style={{ margin: 0, fontWeight: 700 }}>
+                    Grand Total
+                  </Typography.Title>
+                  <Typography.Title level={4} style={{ margin: 0, color: "#102A43", fontWeight: 800 }}>
+                    Rs {Number(bill.grandTotal || 0).toFixed(2)}
+                  </Typography.Title>
+                </Row>
               </div>
             </div>
-          </Col>
-        </Row>
-
-        <Table
-          style={{ marginTop: 16 }}
-          rowKey="_id"
-          columns={columns}
-          dataSource={items}
-          pagination={false}
-          scroll={{ x: "max-content" }}
-          bordered
-        />
-
-        <div style={{ marginTop: 16, display: "flex", justifyContent: "flex-end" }}>
-          <div style={{ width: 320 }}>
-            <Row justify="space-between" style={{ marginBottom: 6 }}>
-              <Typography.Text type="secondary">Sub Total</Typography.Text>
-              <Typography.Text>Rs {Number(bill.subTotal || 0).toFixed(2)}</Typography.Text>
-            </Row>
-            <Row justify="space-between" style={{ marginBottom: 6 }}>
-              <Typography.Text type="secondary">Total Tax</Typography.Text>
-              <Typography.Text>Rs {Number(bill.totalTax || 0).toFixed(2)}</Typography.Text>
-            </Row>
-            <Row justify="space-between" style={{ marginBottom: 8 }}>
-              <Typography.Text type="secondary">Discount</Typography.Text>
-              <Typography.Text>- Rs {Number(bill.discount || 0).toFixed(2)}</Typography.Text>
-            </Row>
-            <Divider style={{ margin: "8px 0" }} />
-            <Row justify="space-between">
-              <Typography.Title level={4} style={{ margin: 0 }}>
-                Grand Total
-              </Typography.Title>
-              <Typography.Title level={4} style={{ margin: 0, color: "#102A43" }}>
-                Rs {Number(bill.grandTotal || 0).toFixed(2)}
-              </Typography.Title>
-            </Row>
           </div>
         </div>
       </Card>

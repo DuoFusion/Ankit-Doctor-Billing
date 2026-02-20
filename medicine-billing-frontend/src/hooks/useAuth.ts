@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { loginApi, verifyOtpApi, logoutApi } from "../api/auth.api";
-import { QUERY_KEYS } from "../Constants";
+import { QUERY_KEYS, ROUTES } from "../Constants";
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
@@ -22,7 +22,7 @@ export const useAuth = () => {
       // 🔁 refetch logged-in user
       queryClient.invalidateQueries({ queryKey: QUERY_KEYS.ME });
 
-      navigate("/");
+      navigate("/dashboard");
     },
   });
 
@@ -33,7 +33,7 @@ export const useAuth = () => {
 
       queryClient.removeQueries({ queryKey: QUERY_KEYS.ME });
 
-      navigate("/login");
+      navigate(ROUTES.LOGIN);
     },
   });
 

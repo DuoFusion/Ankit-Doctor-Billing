@@ -5,7 +5,6 @@ import {
   Card,
   Input,
   Pagination,
-  Popconfirm,
   Space,
   Table,
   Typography,
@@ -16,6 +15,7 @@ import { ROUTES } from "../../Constants";
 import { useCategories, useDeleteCategory } from "../../hooks/useCategories";
 import { useMe } from "../../hooks/useMe";
 import type { Category } from "../../types/category";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const CategoriesList = () => {
   const { message } = App.useApp();
@@ -26,6 +26,7 @@ const CategoriesList = () => {
   const { data, isLoading, error } = useCategories(filters.page, limit, filters.search);
   const { mutateAsync: deleteCategory, isPending } = useDeleteCategory();
   const { data: me } = useMe();
+  const confirmDialog = useConfirmDialog();
 
   const categories = data?.categories ?? [];
   const pagination = data?.pagination;
@@ -71,16 +72,22 @@ const CategoriesList = () => {
           >
             Edit
           </Button>
-          <Popconfirm
-            title="Delete category?"
-            okText="Delete"
-            cancelText="Cancel"
-            onConfirm={() => handleDelete(category._id)}
+          <Button
+            danger
+            loading={isPending}
+            icon={<DeleteOutlined />}
+            onClick={() =>
+              confirmDialog({
+                title: "Confirm Deletion",
+                message: "This action cannot be undone. Are you sure you want to delete this category?",
+                confirmText: "Delete",
+                danger: true,
+                onConfirm: () => handleDelete(category._id),
+              })
+            }
           >
-            <Button danger loading={isPending} icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
+            Delete
+          </Button>
         </Space>
       ),
     },

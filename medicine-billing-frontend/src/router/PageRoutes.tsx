@@ -25,7 +25,6 @@ import CreateUser from "../pages/admin/CreateUser";
 
 // Auth
 import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
@@ -49,8 +48,8 @@ export const PageRoutes = [
         element: <Login />,
       },
       {
-        path: ROUTES.SIGNUP,
-        element: <Signup />,
+        path: "/login",
+        element: <Login />,
       },
       {
         path: ROUTES.FORGOT_PASSWORD,

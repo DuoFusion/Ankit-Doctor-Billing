@@ -5,7 +5,6 @@ import {
   Card,
   Input,
   Pagination,
-  Popconfirm,
   Space,
   Table,
   Typography,
@@ -16,6 +15,7 @@ import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
 import { ROLE, ROUTES } from "../../Constants";
 import type { Product } from "../../types/product";
 import { useMe } from "../../hooks/useMe";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const ProductsList = () => {
   const { message } = App.useApp();
@@ -26,6 +26,7 @@ const ProductsList = () => {
   const { data, isPending } = useProducts(filters.page, limit, filters.search);
   const { mutateAsync: deleteProduct, isPending: deletePending } = useDeleteProduct();
   const { data: me } = useMe();
+  const confirmDialog = useConfirmDialog();
   const isAdmin = me?.role === ROLE.ADMIN;
   const products: Product[] = data?.products ?? [];
   const pagination = data?.pagination;
@@ -95,16 +96,22 @@ const ProductsList = () => {
           >
             Edit
           </Button>
-          <Popconfirm
-            title="Delete product?"
-            okText="Delete"
-            cancelText="Cancel"
-            onConfirm={() => handleDelete(product._id)}
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            loading={deletePending}
+            onClick={() =>
+              confirmDialog({
+                title: "Confirm Deletion",
+                message: "This action cannot be undone. Are you sure you want to delete this product?",
+                confirmText: "Delete",
+                danger: true,
+                onConfirm: () => handleDelete(product._id),
+              })
+            }
           >
-            <Button danger icon={<DeleteOutlined />} loading={deletePending}>
-              Delete
-            </Button>
-          </Popconfirm>
+            Delete
+          </Button>
         </Space>
       ),
     },

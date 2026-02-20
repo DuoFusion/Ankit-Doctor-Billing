@@ -5,7 +5,6 @@ import {
   Card,
   Input,
   Pagination,
-  Popconfirm,
   Space,
   Table,
   Typography,
@@ -16,6 +15,7 @@ import { ROLE, ROUTES } from "../../Constants";
 import { useCompanies, useDeleteCompany } from "../../hooks/useCompanies";
 import { useMe } from "../../hooks/useMe";
 import type { Company } from "../../types/company";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const CompaniesList = () => {
   const { message } = App.useApp();
@@ -26,6 +26,7 @@ const CompaniesList = () => {
   const { data, isLoading } = useCompanies(filters.page, limit, filters.search);
   const { mutateAsync: deleteCompany, isPending } = useDeleteCompany();
   const { data: me } = useMe();
+  const confirmDialog = useConfirmDialog();
   const isAdmin = me?.role === ROLE.ADMIN;
   const companies: Company[] = data?.companies ?? [];
   const pagination = data?.pagination;
@@ -71,16 +72,22 @@ const CompaniesList = () => {
           >
             Edit
           </Button>
-          <Popconfirm
-            title="Delete company?"
-            okText="Delete"
-            cancelText="Cancel"
-            onConfirm={() => handleDelete(company._id)}
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            loading={isPending}
+            onClick={() =>
+              confirmDialog({
+                title: "Confirm Deletion",
+                message: "This action cannot be undone. Are you sure you want to delete this company?",
+                confirmText: "Delete",
+                danger: true,
+                onConfirm: () => handleDelete(company._id),
+              })
+            }
           >
-            <Button danger icon={<DeleteOutlined />} loading={isPending}>
-              Delete
-            </Button>
-          </Popconfirm>
+            Delete
+          </Button>
         </Space>
       ),
     },

@@ -5,7 +5,6 @@ import {
   Card,
   Input,
   Pagination,
-  Popconfirm,
   Space,
   Table,
   Typography,
@@ -14,6 +13,7 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-de
 import { useBills, useDeleteBill } from "../../hooks/useBills";
 import { ROLE, ROUTES } from "../../Constants";
 import { useMe } from "../../hooks/useMe";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const BillList = () => {
   const navigate = useNavigate();
@@ -21,8 +21,9 @@ const BillList = () => {
   const limit = 10;
 
   const { data, isLoading } = useBills(filters.page, limit, filters.search);
-  const { mutate } = useDeleteBill();
+  const { mutateAsync: deleteBill } = useDeleteBill();
   const { data: me } = useMe();
+  const confirmDialog = useConfirmDialog();
   const isAdmin = me?.role === ROLE.ADMIN;
 
   const rows = data?.data ?? [];
@@ -75,17 +76,21 @@ const BillList = () => {
           >
             Edit
           </Button>
-          <Popconfirm
-            title="Delete bill?"
-            description="This action cannot be undone."
-            okText="Delete"
-            cancelText="Cancel"
-            onConfirm={() => mutate(bill._id)}
+          <Button
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() =>
+              confirmDialog({
+                title: "Confirm Deletion",
+                message: "This action cannot be undone. Are you sure you want to delete this bill?",
+                confirmText: "Delete",
+                danger: true,
+                onConfirm: () => deleteBill(bill._id),
+              })
+            }
           >
-            <Button danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
+            Delete
+          </Button>
         </Space>
       ),
     },
