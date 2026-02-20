@@ -34,12 +34,18 @@ export const getAllUsersApi = async ({
 
 export const updateUserApi = async ({
   id,
-  role,
+  data,
 }: {
   id: string;
-  role: string;
+  data: {
+    name: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    role: string;
+  };
 }) => {
-  const res = await api.put(`/users/${id}`, { role });
+  const res = await api.put(`/users/${id}`, data);
   return res.data;
 };
 

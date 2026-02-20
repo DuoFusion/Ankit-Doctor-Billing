@@ -5,6 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 import { useUsers, useUpdateUser } from "../../hooks/useUsers";
 import EditUserModal from "../../components/EditUserModal";
 import { ROUTES } from "../../Constants";
+import type { User } from "../../types";
 
 const Users = () => {
   const [page, setPage] = useState(1);
@@ -14,7 +15,7 @@ const Users = () => {
 
   const { data, isLoading, isFetching } = useUsers(page, limit, search);
   const { mutateAsync: updateUser, isPending } = useUpdateUser();
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   if (isLoading) return <p>Loading users...</p>;
   if (!data) return <p>No access</p>;
@@ -24,24 +25,32 @@ const Users = () => {
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
+    { title: "Phone", dataIndex: "phone", key: "phone", render: (v: string) => v || "-" },
     {
       title: "Role",
       key: "role",
-      render: (_: any, user: any) => (
+      render: (_: any, user: User) => (
         <Tag color={user.role === "ADMIN" ? "geekblue" : "default"}>{user.role}</Tag>
       ),
     },
     {
       title: "Action",
       key: "action",
-      render: (_: any, user: any) => (
+      render: (_: any, user: User) => (
         <Button onClick={() => setSelectedUser(user)}>Edit</Button>
       ),
     },
   ];
 
-  const handleSave = async (role: string) => {
-    await updateUser({ id: selectedUser._id, role });
+  const handleSave = async (data: {
+    name: string;
+    email: string;
+    phone?: string;
+    address?: string;
+    role: string;
+  }) => {
+    if (!selectedUser) return;
+    await updateUser({ id: selectedUser._id, data });
     setSelectedUser(null);
   };
 

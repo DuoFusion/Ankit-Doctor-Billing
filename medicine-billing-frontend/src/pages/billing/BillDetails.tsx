@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Col, Divider, Row, Space, Table, Typography } from "antd";
+import { Button, Card, Space, Typography } from "antd";
 import { EditOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useBill } from "../../hooks/useBills";
@@ -11,6 +11,7 @@ const getLogoUrl = (logo?: string) => {
   const apiBase = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
   return `${apiBase}/uploads/${logo}`;
 };
+const INVOICE_ACCENT = "#2f3f46";
 
 const BillView = () => {
   const navigate = useNavigate();
@@ -43,114 +44,12 @@ const BillView = () => {
         filename: `${bill.billNo || "invoice"}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        jsPDF: { unit: "mm", orientation: "portrait" },
         pagebreak: { mode: ["css", "legacy"] },
       } as any)
       .from(printRef.current)
       .save();
   };
-
-  const hasHsn = items.some((item: any) => item.hsn);
-  const hasBatch = items.some((item: any) => item.batch);
-  const hasExp = items.some((item: any) => item.exp);
-  const hasPayment = items.some((item: any) => item.payment);
-  const hasStatus = items.some((item: any) => item.status);
-
-  const columns = [
-    {
-      title: "No",
-      key: "srNo",
-      width: 60,
-      render: (_: any, item: any, index: number) => item.srNo || index + 1,
-    },
-    { title: "Product", dataIndex: "productName", key: "productName", width: 200 },
-    ...(hasHsn
-      ? [
-          {
-            title: "HSN",
-            key: "hsn",
-            width: 100,
-            render: (_: any, item: any) => item.hsn || "-",
-          },
-        ]
-      : []),
-    ...(hasBatch
-      ? [
-          {
-            title: "Batch",
-            key: "batch",
-            width: 100,
-            render: (_: any, item: any) => item.batch || "-",
-          },
-        ]
-      : []),
-    ...(hasExp
-      ? [
-          {
-            title: "Exp",
-            key: "exp",
-            width: 100,
-            render: (_: any, item: any) => item.exp || "-",
-          },
-        ]
-      : []),
-    {
-      title: "Qty",
-      dataIndex: "qty",
-      key: "qty",
-      align: "right" as const,
-      width: 80,
-    },
-    {
-      title: "Rate",
-      key: "rate",
-      align: "right" as const,
-      width: 110,
-      render: (_: any, item: any) => `Rs ${Number(item.rate || 0).toFixed(2)}`,
-    },
-    {
-      title: "GST%",
-      key: "gstPercent",
-      align: "right" as const,
-      width: 90,
-      render: (_: any, item: any) => `${Number(item.taxPercent || 0).toFixed(2)}%`,
-    },
-    {
-      title: "GST Amt",
-      key: "gstAmount",
-      align: "right" as const,
-      width: 120,
-      render: (_: any, item: any) =>
-        `Rs ${Number((item.cgst || 0) + (item.sgst || 0)).toFixed(2)}`,
-    },
-    ...(hasPayment
-      ? [
-          {
-            title: "Payment",
-            key: "payment",
-            width: 100,
-            render: (_: any, item: any) => item.payment || "-",
-          },
-        ]
-      : []),
-    ...(hasStatus
-      ? [
-          {
-            title: "Status",
-            key: "status",
-            width: 100,
-            render: (_: any, item: any) => item.status || "-",
-          },
-        ]
-      : []),
-    {
-      title: "Total",
-      key: "total",
-      align: "right" as const,
-      width: 120,
-      render: (_: any, item: any) => `Rs ${Number(item.total || 0).toFixed(2)}`,
-    },
-  ];
 
   return (
     <div>
@@ -174,162 +73,179 @@ const BillView = () => {
         </Space>
       </div>
 
-      <Card style={{ borderRadius: 14 }} bodyStyle={{ padding: 22 }}>
+      <Card style={{ borderRadius: 14 }} bodyStyle={{ padding: 0, overflow: "hidden" }}>
         <div
           ref={printRef}
           style={{
+            margin: "0 auto",
+            boxSizing: "border-box",
             fontFamily: "Inter, Poppins, Roboto, 'Segoe UI', sans-serif",
-            lineHeight: 1.55,
+            lineHeight: 1.5,
             letterSpacing: 0.2,
-            color: "#0f172a",
+            color: "#1f2937",
+            background: "#f8f8f5",
+            border: "1px solid #d8d8d2",
+            position: "relative",
           }}
         >
-          <style>{`
-            .invoice-pdf .ant-typography {
-              line-height: 1.55;
-              letter-spacing: 0.2px;
-            }
-            .invoice-pdf .ant-table {
-              font-size: 13px;
-            }
-            .invoice-pdf .ant-table-thead > tr > th {
-              font-weight: 700 !important;
-              font-size: 12.5px;
-              letter-spacing: 0.25px;
-              background: #f8fafc !important;
-              padding-top: 12px !important;
-              padding-bottom: 12px !important;
-            }
-            .invoice-pdf .ant-table-tbody > tr > td {
-              padding-top: 12px !important;
-              padding-bottom: 12px !important;
-            }
-          `}</style>
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: 18,
+              background: INVOICE_ACCENT,
+            }}
+          />
 
-          <div className="invoice-pdf">
-            <div
-              style={{
-                padding: "4px 0 14px",
-                marginBottom: 18,
-                borderBottom: "1px solid #e5e7eb",
-              }}
-            >
-              <Row justify="space-between" align="middle" gutter={[14, 10]}>
-                <Col xs={24} md={15}>
-                  <Typography.Text
-                    style={{
-                      fontSize: 12.5,
-                      letterSpacing: 1.1,
-                      color: "#1E6F5C",
-                      fontWeight: 700,
-                    }}
-                  >
-                    TAX INVOICE
+          <div style={{ padding: "28px 28px 0 38px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
+              <div style={{ flex: 1 }}>
+                <Typography.Text style={{ display: "block", fontWeight: 700, fontSize: 24, color: "#1f2a30" }}>
+                  INVOICE
+                </Typography.Text>
+                <div style={{ width: 180, height: 2, background: INVOICE_ACCENT, margin: "6px 0 14px" }} />
+                <Typography.Text style={{ display: "block", fontWeight: 700, fontSize: 14, marginBottom: 8 }}>
+                  INVOICE TO:
+                </Typography.Text>
+                <Typography.Text style={{ display: "block", color: "#4b5563" }}>Name: {userName}</Typography.Text>
+                <Typography.Text style={{ display: "block", color: "#4b5563" }}>Email: {userEmail}</Typography.Text>
+                <Typography.Text style={{ display: "block", color: "#4b5563" }}>Phone: {userPhone}</Typography.Text>
+                <Typography.Text style={{ display: "block", color: "#4b5563" }}>Address: {userAddress}</Typography.Text>
+              </div>
+
+              <div style={{ width: 260 }}>
+                <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "10px 12px", marginBottom: 12 }}>
+                  <Typography.Text style={{ display: "block", color: "#fff", fontSize: 12 }}>
+                    {companyPhone}
                   </Typography.Text>
-                  <Typography.Title level={4} style={{ margin: "6px 0 0", fontWeight: 700 }}>
-                    {companyName}
-                  </Typography.Title>
-                </Col>
-                <Col xs={24} md={9} style={{ textAlign: "right" }}>
-                  <Typography.Text style={{ display: "block", fontSize: 13.5, fontWeight: 600 }}>
-                    Bill No: {bill.billNo || "-"}
+                  <Typography.Text style={{ display: "block", color: "#fff", fontSize: 12 }}>
+                    {companyEmail}
                   </Typography.Text>
-                  <Typography.Text type="secondary">
-                    Date: {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString() : "-"}
+                  <Typography.Text style={{ display: "block", color: "#fff", fontSize: 12 }}>
+                    {companyAddress}
                   </Typography.Text>
-                </Col>
-              </Row>
+                </div>
+                <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  {bill.companyId?.logo && (
+                    <img
+                      src={getLogoUrl(bill.companyId.logo)}
+                      alt="Company Logo"
+                      style={{ width: 84, height: 84, objectFit: "contain", background: "#fff", padding: 6 }}
+                    />
+                  )}
+                  <div>
+                    <Typography.Text style={{ display: "block", fontWeight: 700 }}>{companyName}</Typography.Text>
+                    <Typography.Text style={{ display: "block", color: "#4b5563", fontSize: 12 }}>
+                      GST: {companyGst}
+                    </Typography.Text>
+                    <Typography.Text style={{ display: "block", color: "#4b5563", fontSize: 12 }}>
+                      Bill No: {bill.billNo || "-"}
+                    </Typography.Text>
+                    <Typography.Text style={{ display: "block", color: "#4b5563", fontSize: 12 }}>
+                      Date: {bill.createdAt ? new Date(bill.createdAt).toLocaleDateString() : "-"}
+                    </Typography.Text>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <Row gutter={[18, 18]} align="top">
-              <Col xs={24} md={13}>
-                <div
-                  style={{
-                    padding: "2px 0",
-                    minHeight: 130,
-                  }}
-                >
-                  <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
-                    {bill.companyId?.logo && (
-                      <img
-                        src={getLogoUrl(bill.companyId.logo)}
-                        alt="Company Logo"
-                        style={{ width: 62, height: 62, objectFit: "contain" }}
-                      />
-                    )}
-                    <div>
-                      <Typography.Text style={{ fontWeight: 700, fontSize: 13.5, display: "block", marginBottom: 6 }}>
-                        Company Information
-                      </Typography.Text>
-                      <Typography.Text type="secondary" style={{ display: "block" }}>GST No: {companyGst}</Typography.Text>
-                      <Typography.Text type="secondary" style={{ display: "block" }}>Address: {companyAddress}</Typography.Text>
-                      <Typography.Text type="secondary" style={{ display: "block" }}>Phone: {companyPhone}</Typography.Text>
-                      <Typography.Text type="secondary" style={{ display: "block" }}>Email: {companyEmail}</Typography.Text>
+            <div style={{ marginTop: 24 }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ background: INVOICE_ACCENT }}>
+                    <th style={{ color: "#fff", textAlign: "left", padding: "10px 12px", fontWeight: 600 }}>DESCRIPTION</th>
+                    <th style={{ color: "#fff", textAlign: "right", padding: "10px 12px", fontWeight: 600 }}>QTY</th>
+                    <th style={{ color: "#fff", textAlign: "right", padding: "10px 12px", fontWeight: 600 }}>UNIT PRICE</th>
+                    <th style={{ color: "#fff", textAlign: "right", padding: "10px 12px", fontWeight: 600 }}>GST %</th>
+                    <th style={{ color: "#fff", textAlign: "right", padding: "10px 12px", fontWeight: 600 }}>GST AMOUNT</th>
+                    <th style={{ color: "#fff", textAlign: "right", padding: "10px 12px", fontWeight: 600 }}>TOTAL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items.map((item: any, index: number) => (
+                    <tr key={item._id || index} style={{ borderBottom: "1px solid #d1d5db" }}>
+                      <td style={{ padding: "11px 12px" }}>{item.productName || "-"}</td>
+                      <td style={{ padding: "11px 12px", textAlign: "right" }}>{Number(item.qty || 0)}</td>
+                      <td style={{ padding: "11px 12px", textAlign: "right" }}>Rs {Number(item.rate || 0).toFixed(2)}</td>
+                      <td style={{ padding: "11px 12px", textAlign: "right" }}>{Number(item.taxPercent || 0).toFixed(2)}%</td>
+                      <td style={{ padding: "11px 12px", textAlign: "right" }}>
+                        Rs {Number((item.cgst || 0) + (item.sgst || 0)).toFixed(2)}
+                      </td>
+                      <td style={{ padding: "11px 12px", textAlign: "right", fontWeight: 600 }}>
+                        Rs {Number(item.total || 0).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              style={{
+                marginTop: 26,
+                display: "grid",
+                gridTemplateColumns: "1fr 280px",
+                gap: 22,
+                minHeight: 190,
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
+                <Typography.Text style={{ display: "block", fontWeight: 700, marginBottom: 6 }}>
+                  TERMS AND CONDITIONS
+                </Typography.Text>
+                <Typography.Text style={{ display: "block", color: "#6b7280", fontSize: 12 }}>
+                  Goods once sold will not be taken back. Keep this invoice for claim and audit.
+                </Typography.Text>
+              </div>
+
+              <div>
+                <div style={{ display: "grid", gap: 8 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>SUB TOTAL</div>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
+                      Rs {Number(bill.subTotal || 0).toFixed(2)}
+                    </div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>TAX</div>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
+                      Rs {Number(bill.totalTax || 0).toFixed(2)}
+                    </div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>DISCOUNT</div>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
+                      - Rs {Number(bill.discount || 0).toFixed(2)}
                     </div>
                   </div>
                 </div>
-              </Col>
-              <Col xs={24} md={11}>
-                <div
-                  style={{
-                    padding: "2px 0",
-                    minHeight: 130,
-                  }}
-                >
-                  <Typography.Text style={{ fontWeight: 700, fontSize: 13.5, display: "block", marginBottom: 8 }}>
-                    Billing Details
-                  </Typography.Text>
-                  <Typography.Text type="secondary" style={{ display: "block" }}>Created By: {userName}</Typography.Text>
-                  <Typography.Text type="secondary" style={{ display: "block" }}>Email: {userEmail}</Typography.Text>
-                  <Typography.Text type="secondary" style={{ display: "block" }}>Phone: {userPhone}</Typography.Text>
-                  <Typography.Text type="secondary" style={{ display: "block" }}>Address: {userAddress}</Typography.Text>
+
+                <div style={{ marginTop: 12, borderTop: "1px solid #9ca3af", paddingTop: 10 }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <Typography.Text style={{ fontWeight: 700, fontSize: 13 }}>GRAND TOTAL</Typography.Text>
+                    <Typography.Text style={{ fontWeight: 800, fontSize: 16, color: "#111827" }}>
+                      Rs {Number(bill.grandTotal || 0).toFixed(2)}
+                    </Typography.Text>
+                  </div>
                 </div>
-              </Col>
-            </Row>
 
-            <Divider style={{ margin: "14px 0 10px" }} />
-
-            <Table
-              style={{ marginTop: 8 }}
-              rowKey="_id"
-              columns={columns}
-              dataSource={items}
-              pagination={false}
-              scroll={{ x: "max-content" }}
-              size="middle"
-              bordered
-            />
-
-            <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
-              <div
-                style={{
-                  width: 370,
-                  padding: "2px 0",
-                }}
-              >
-                <Row justify="space-between" style={{ marginBottom: 8 }}>
-                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Sub Total</Typography.Text>
-                  <Typography.Text style={{ fontWeight: 500 }}>Rs {Number(bill.subTotal || 0).toFixed(2)}</Typography.Text>
-                </Row>
-                <Row justify="space-between" style={{ marginBottom: 8 }}>
-                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Total Tax</Typography.Text>
-                  <Typography.Text style={{ fontWeight: 500 }}>Rs {Number(bill.totalTax || 0).toFixed(2)}</Typography.Text>
-                </Row>
-                <Row justify="space-between" style={{ marginBottom: 10 }}>
-                  <Typography.Text type="secondary" style={{ fontWeight: 500 }}>Discount</Typography.Text>
-                  <Typography.Text style={{ fontWeight: 500 }}>- Rs {Number(bill.discount || 0).toFixed(2)}</Typography.Text>
-                </Row>
-                <Divider style={{ margin: "10px 0 12px" }} />
-                <Row justify="space-between">
-                  <Typography.Title level={4} style={{ margin: 0, fontWeight: 700 }}>
-                    Grand Total
-                  </Typography.Title>
-                  <Typography.Title level={4} style={{ margin: 0, color: "#102A43", fontWeight: 800 }}>
-                    Rs {Number(bill.grandTotal || 0).toFixed(2)}
-                  </Typography.Title>
-                </Row>
+                <div style={{ marginTop: 30, textAlign: "center" }}>
+                  <div style={{ borderTop: "1px solid #9ca3af", width: "80%", margin: "0 auto 6px" }} />
+                  <Typography.Text style={{ color: "#6b7280", fontSize: 12 }}>SIGNATURE</Typography.Text>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div style={{ marginTop: 24, background: INVOICE_ACCENT, color: "#fff", padding: "14px 28px 14px 38px" }}>
+            <Typography.Text style={{ display: "block", color: "#fff", fontWeight: 600 }}>
+              Thank you for your business.
+            </Typography.Text>
+            <Typography.Text style={{ color: "#d1d5db", fontSize: 12 }}>
+              This is a computer generated medical invoice.
+            </Typography.Text>
           </div>
         </div>
       </Card>
