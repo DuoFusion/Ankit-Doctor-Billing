@@ -12,16 +12,34 @@ import {
 export const useProducts = (
   page: number,
   limit: number = 10,
-  search: string = ""
+  search: string = "",
+  filters?: {
+    category?: string;
+    productType?: string;
+    companyId?: string;
+    enabled?: boolean;
+  }
 ) => {
   return useQuery({
-    queryKey: ["products", page, limit, search],
+    queryKey: [
+      "products",
+      page,
+      limit,
+      search,
+      filters?.category,
+      filters?.productType,
+      filters?.companyId,
+    ],
     queryFn: () =>
       getProductsApi({
         page,
         limit,
         search: search || undefined,
+        category: filters?.category,
+        productType: filters?.productType,
+        companyId: filters?.companyId,
       }),
+    enabled: filters?.enabled ?? true,
 
     placeholderData: (prev) => prev,
     staleTime: 1000 * 5,

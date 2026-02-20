@@ -3,18 +3,15 @@ import { App } from "antd";
 import BillForm from "../../components/billing/BillForm";
 import { ROUTES } from "../../Constants";
 import { useCompanies } from "../../hooks/useCompanies";
-import { useProducts } from "../../hooks/useProducts";
 import { useCreateBill } from "../../hooks/useBills";
 
 const CreateBill = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { data: companyData } = useCompanies(1, 100, "");
-  const { data: productData } = useProducts(1, 200, "");
   const { mutateAsync, isPending } = useCreateBill();
 
   const companies = companyData?.companies ?? [];
-  const products = productData?.products ?? [];
 
   const handleSubmit = async (payload: {
     companyId: string;
@@ -36,7 +33,6 @@ const CreateBill = () => {
       submitText="Create Bill"
       submitLoading={isPending}
       companies={companies}
-      products={products}
       onSubmit={handleSubmit}
       onCancel={() => navigate(ROUTES.BILLING)}
     />

@@ -25,34 +25,46 @@ import CreateUser from "../pages/admin/CreateUser";
 
 // Auth
 import Login from "../pages/auth/Login";
+import Signup from "../pages/auth/Signup";
 import ForgotPassword from "../pages/auth/ForgotPassword";
 import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
 
 import { ROUTES } from "../Constants";
 import ProtectedRoute from "../components/protected/ProtectedRoute";
+import PublicOnlyRoute from "../components/protected/PublicOnlyRoute";
 import Layout from "../components/layout/Layout";
 import BillDetails from "../pages/billing/BillDetails";
 import CreateBill from "../pages/billing/CreateBill";
 import BillList from "../pages/billing/BillList";
 import EditBill from "../pages/billing/EditBill";
+import NotFound from "../pages/NotFound";
 export const PageRoutes = [
   /* ============ PUBLIC ============ */
   {
-    path: ROUTES.LOGIN,
-    element: <Login />,
-  },
-  {
-    path: ROUTES.FORGOT_PASSWORD,
-    element: <ForgotPassword />,
-  },
-  {
-    path: ROUTES.RESET_PASSWORD,
-    element: <ResetPassword />,
-  },
-  {
-    path: ROUTES.VERIFY_OTP,
-    element: <VerifyOtp />,
+    element: <PublicOnlyRoute />,
+    children: [
+      {
+        path: ROUTES.LOGIN,
+        element: <Login />,
+      },
+      {
+        path: ROUTES.SIGNUP,
+        element: <Signup />,
+      },
+      {
+        path: ROUTES.FORGOT_PASSWORD,
+        element: <ForgotPassword />,
+      },
+      {
+        path: ROUTES.RESET_PASSWORD,
+        element: <ResetPassword />,
+      },
+      {
+        path: ROUTES.VERIFY_OTP,
+        element: <VerifyOtp />,
+      },
+    ],
   },
 
   /* ============ PROTECTED WRAPPER ============ */
@@ -162,5 +174,9 @@ export const PageRoutes = [
         ],
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ];

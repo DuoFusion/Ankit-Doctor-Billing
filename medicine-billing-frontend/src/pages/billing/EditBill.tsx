@@ -5,7 +5,6 @@ import BillForm from "../../components/billing/BillForm";
 import { ROUTES } from "../../Constants";
 import { useBill, useUpdateBill } from "../../hooks/useBills";
 import { useCompanies } from "../../hooks/useCompanies";
-import { useProducts } from "../../hooks/useProducts";
 
 const EditBill = () => {
   const { message } = App.useApp();
@@ -13,11 +12,9 @@ const EditBill = () => {
   const navigate = useNavigate();
   const { data: billData, isLoading } = useBill(id);
   const { data: companyData } = useCompanies(1, 100, "");
-  const { data: productData } = useProducts(1, 200, "");
   const { mutateAsync, isPending } = useUpdateBill();
 
   const companies = companyData?.companies ?? [];
-  const products = productData?.products ?? [];
 
   const initialItems = useMemo(
     () =>
@@ -59,7 +56,6 @@ const EditBill = () => {
       submitText="Update Bill"
       submitLoading={isPending}
       companies={companies}
-      products={products}
       initialCompanyId={(billData.bill.companyId as any)?._id || ""}
       initialDiscount={Number(billData.bill.discount || 0)}
       initialItems={initialItems}

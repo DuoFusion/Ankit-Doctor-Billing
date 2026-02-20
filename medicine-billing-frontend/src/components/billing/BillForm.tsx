@@ -11,6 +11,7 @@ import {
   App,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { useProducts } from "../../hooks/useProducts";
 
 type BillFormItem = {
   productId: string;
@@ -27,7 +28,6 @@ type BillFormProps = {
   submitText: string;
   submitLoading?: boolean;
   companies: any[];
-  products: any[];
   initialCompanyId?: string;
   initialDiscount?: number;
   initialItems?: BillFormItem[];
@@ -57,7 +57,6 @@ const BillForm = ({
   submitText,
   submitLoading,
   companies,
-  products,
   initialCompanyId = "",
   initialDiscount = 0,
   initialItems,
@@ -68,6 +67,11 @@ const BillForm = ({
   const [companyId, setCompanyId] = useState(initialCompanyId);
   const [discount, setDiscount] = useState(initialDiscount);
   const [items, setItems] = useState<BillFormItem[]>(normalizeItems(initialItems));
+  const { data: productData, isLoading: productsLoading } = useProducts(1, 1000, "", {
+    companyId: companyId || undefined,
+    enabled: !!companyId,
+  });
+  const products = productData?.products ?? [];
 
   useEffect(() => {
     setCompanyId(initialCompanyId || "");
@@ -76,6 +80,11 @@ const BillForm = ({
   }, [initialCompanyId, initialDiscount, initialItems]);
 
   const getProduct = (id: string) => products.find((p: any) => p._id === id);
+
+  const handleCompanyChange = (value: string) => {
+    setCompanyId(value);
+    setItems([{ ...emptyItem }]);
+  };
 
   const updateItem = (index: number, key: keyof BillFormItem, value: any) => {
     setItems((prev) => {
@@ -140,9 +149,11 @@ const BillForm = ({
         <Select
           value={item.productId || undefined}
           style={{ width: 220 }}
-          placeholder="Select product"
+          placeholder={companyId ? "Select product" : "Select company first"}
           onChange={(value: string) => updateItem(index, "productId", value)}
           options={products.map((p: any) => ({ value: p._id, label: p.name }))}
+          disabled={!companyId}
+          loading={productsLoading}
         />
       ),
     },
@@ -224,7 +235,7 @@ const BillForm = ({
           <Select
             value={companyId || undefined}
             placeholder="Select company"
-            onChange={setCompanyId}
+            onChange={handleCompanyChange}
             options={companies.map((c: any) => ({ value: c._id, label: c.companyName }))}
           />
         </Form.Item>
@@ -239,7 +250,7 @@ const BillForm = ({
       />
 
       <Space style={{ marginTop: 16 }}>
-        <Button icon={<PlusOutlined />} onClick={addRow}>
+        <Button icon={<PlusOutlined />} onClick={addRow} disabled={!companyId}>
           Add Item
         </Button>
       </Space>
