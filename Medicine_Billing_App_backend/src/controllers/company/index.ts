@@ -81,6 +81,7 @@ export const getAllCompanies = async (
 
     const [companies, total] = await Promise.all([
       Company.find(filter)
+        .populate("userId", "name email role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limitNum),

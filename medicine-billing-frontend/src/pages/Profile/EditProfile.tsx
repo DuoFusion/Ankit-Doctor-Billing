@@ -1,110 +1,63 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Card, Form, Input, Typography, message } from "antd";
 import { ROUTES } from "../../Constants";
 import { useProfile, useUpdateProfile } from "../../hooks/useProfile";
-
-type FormState = {
-  name: string;
-  email: string;
-};
 
 const EditProfile = () => {
   const { data: user } = useProfile();
   const { mutateAsync, isPending } = useUpdateProfile();
   const navigate = useNavigate();
-
-  const [form, setForm] = useState<FormState>({
-    name: "",
-    email: "",
-  });
+  const [form] = Form.useForm();
 
   useEffect(() => {
-    if (user) {
-      setForm({
-        name: user.name,
-        email: user.email,
-      });
-    }
-  }, [user]);
+    if (!user) return;
+    form.setFieldsValue({
+      name: user.name,
+      email: user.email,
+      phone: user.phone || "",
+      address: user.address || "",
+    });
+  }, [user, form]);
 
   if (!user) return null;
 
-  const handleSave = async () => {
-    await mutateAsync(form);
-    navigate(ROUTES.PROFILE);
+  const handleSave = async (values: any) => {
+    try {
+      await mutateAsync(values);
+      message.success("Profile updated");
+      navigate(ROUTES.PROFILE);
+    } catch {
+      message.error("Failed to update profile");
+    }
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center bg-slate-50">
-  <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md border">
-    <h1 className="text-2xl font-semibold text-slate-800 mb-6 text-center">
-      Update Profile
-    </h1>
-
-    {/* Name */}
-    <div className="mb-5">
-      <label className="block text-sm font-medium text-slate-600 mb-1">
-        Name
-      </label>
-      <input
-        value={form.name}
-        onChange={(e) =>
-          setForm((prev) => ({ ...prev, name: e.target.value }))
-        }
-        placeholder="Enter your name"
-        className="
-          w-full px-4 py-2 border rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-cyan-500
-          transition
-        "
-      />
-    </div>
-
-    {/* Email */}
-    <div className="mb-6">
-      <label className="block text-sm font-medium text-slate-600 mb-1">
-        Email
-      </label>
-      <input
-        value={form.email}
-        onChange={(e) =>
-          setForm((prev) => ({ ...prev, email: e.target.value }))
-        }
-        placeholder="Enter your email"
-        className="
-          w-full px-4 py-2 border rounded-lg
-          focus:outline-none focus:ring-2 focus:ring-cyan-500
-          transition
-        "
-      />
-    </div>
-
-    <button
-      onClick={handleSave}
-      disabled={isPending}
-      className="
-        w-full bg-cyan-600 text-white py-2.5 rounded-lg
-        font-medium tracking-wide
-        hover:bg-cyan-700
-        active:scale-[0.98]
-        transition
-        disabled:opacity-50 disabled:cursor-not-allowed
-      "
-    >
-      {isPending ? "Saving..." : "Save Changes"}
-    </button>
-
-    <button
-      onClick={() => navigate(ROUTES.PROFILE)}
-      className="
-        w-full mt-3 text-sm text-slate-500
-        hover:text-slate-700
-      "
-    >
-      Cancel
-    </button>
-  </div>
-</div>
+    <Card style={{ maxWidth: 760, margin: "0 auto" }}>
+      <Typography.Title level={4}>Update Profile</Typography.Title>
+      <Form form={form} layout="vertical" onFinish={handleSave} requiredMark={false}>
+        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="phone" label="Phone">
+          <Input />
+        </Form.Item>
+        <Form.Item name="address" label="Address">
+          <Input.TextArea rows={3} />
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
+          <Button onClick={() => navigate(ROUTES.PROFILE)} style={{ marginRight: 8 }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit" loading={isPending}>
+            Save Changes
+          </Button>
+        </Form.Item>
+      </Form>
+    </Card>
   );
 };
 

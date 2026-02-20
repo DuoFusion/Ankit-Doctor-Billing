@@ -1,5 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useMe } from "../../hooks/useMe";
+import { ROUTES } from "../../Constants";
 
 type ProtectedRouteProps = {
   roles?: string[];
@@ -12,7 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
 
   // not logged in
   if (!me) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
   // role based access

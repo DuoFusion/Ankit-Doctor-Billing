@@ -1,61 +1,108 @@
-import { NavLink } from "react-router-dom";
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Menu, Typography } from "antd";
+import type { MenuProps } from "antd";
+import {
+  AppstoreOutlined,
+  ApartmentOutlined,
+  TagsOutlined,
+  ShoppingOutlined,
+  TeamOutlined,
+  FileDoneOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useMe } from "../../hooks/useMe";
 
+type SidebarProps = {
+  onNavigate?: () => void;
+};
 
-const Sidebar = () => {
+const Sidebar = ({ onNavigate }: SidebarProps) => {
   const { data, isLoading } = useMe();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   if (isLoading || !data) return null;
 
-  const role = data.role; // ADMIN | USER
+  const role = data.role;
 
-  const links = [
-    { name: "Dashboard", path: ROUTES.DASHBOARD, roles: ["ADMIN", "USER"] },
-    { name: "Medicines", path: ROUTES.PRODUCTS, roles: ["ADMIN", "USER"] },
-    { name: "Companies", path: ROUTES.COMPANIES, roles: ["ADMIN", "USER"] },
+  const menuItems: MenuProps["items"] = useMemo(
+    () =>
+      [
+        {
+          key: ROUTES.DASHBOARD,
+          icon: <AppstoreOutlined />,
+          label: "Dashboard",
+          roles: ["ADMIN", "USER"],
+        },
+        {
+          key: ROUTES.PRODUCTS,
+          icon: <ShoppingOutlined />,
+          label: "Medicines",
+          roles: ["ADMIN", "USER"],
+        },
+        {
+          key: ROUTES.COMPANIES,
+          icon: <ApartmentOutlined />,
+          label: "Companies",
+          roles: ["ADMIN", "USER"],
+        },
+        {
+          key: ROUTES.CATEGORIES,
+          icon: <TagsOutlined />,
+          label: "Categories",
+          roles: ["ADMIN", "USER"],
+        },
+        {
+          key: ROUTES.BILLING,
+          icon: <FileDoneOutlined />,
+          label: "Billing",
+          roles: ["ADMIN", "USER"],
+        },
+        {
+          key: ROUTES.USERS,
+          icon: <TeamOutlined />,
+          label: "Users",
+          roles: ["ADMIN"],
+        },
+        {
+          key: ROUTES.PROFILE,
+          icon: <UserOutlined />,
+          label: "Profile",
+          roles: ["ADMIN", "USER"],
+        },
+      ].filter((item) => item.roles.includes(role)) as MenuProps["items"],
+    [role]
+  );
 
-    // ADMIN only
-    { name: "Users", path: ROUTES.USERS, roles: ["ADMIN"] },
-
-    { name: "Billing", path: ROUTES.BILLING, roles: ["ADMIN", "USER"] },
-
-    // USER + ADMIN
-    { name: "Profile", path: ROUTES.PROFILE, roles: ["USER", "ADMIN"] },
-  ];
+  const selectedKey =
+    (menuItems || [])
+      .map((item: any) => item.key)
+      .find((key: string) => location.pathname.startsWith(key)) || ROUTES.DASHBOARD;
 
   return (
-    <aside className="w-64 bg-white border-r min-h-screen p-6">
- 
-      {/* Logo */}
-      <div className="text-xl font-bold text-cyan-600 mb-10">
-        💊 Medicine Billing
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "18px 16px", borderBottom: "1px solid #1b3f60" }}>
+        <Typography.Title level={5} style={{ margin: 0, color: "#ffffff" }}>
+          MedBill Pro
+        </Typography.Title>
+        <Typography.Text style={{ color: "#9FB3C8", fontSize: 12 }}>
+          Billing & Inventory
+        </Typography.Text>
       </div>
-
-      {/* Navigation */}
-      <nav className="space-y-1">
-        {links
-          .filter(link => link.roles.includes(role))
-          .map(link => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `
-                flex items-center px-4 py-2 rounded-md text-sm font-medium transition
-                ${
-                  isActive
-                    ? "bg-cyan-50 text-cyan-600 border-l-4 border-cyan-500"
-                    : "text-slate-700 hover:bg-slate-100"
-                }
-              `
-              }
-            >
-              {link.name}
-            </NavLink>
-          ))}
-      </nav>
-    </aside>
+      <Menu
+        theme="dark"
+        mode="inline"
+        selectedKeys={[selectedKey]}
+        items={menuItems}
+        onClick={({ key }: { key: string }) => {
+          navigate(key);
+          onNavigate?.();
+        }}
+        style={{ borderRight: 0, paddingTop: 8, background: "transparent" }}
+      />
+    </div>
   );
 };
 

@@ -1,37 +1,43 @@
-import { useAuth } from "../../hooks/useAuth";
+import { Avatar, Space, Tag, Typography } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import { useMe } from "../../hooks/useMe";
+import { useProfile } from "../../hooks/useProfile";
 
-const Navbar = () => {
-  const { logout } = useAuth();
+type NavbarProps = {
+  compact?: boolean;
+};
+
+const Navbar = ({ compact = false }: NavbarProps) => {
   const { data: me } = useMe();
+  const { data: profile } = useProfile();
 
   return (
-    <div className="h-14 bg-white border-b flex items-center justify-between px-6 shadow-sm">
-      {/* Left */}
-      <h1 className="text-xl font-bold text-cyan-600">
-        💊 Medicine Billing System
-      </h1>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", minWidth: 0 }}>
+      <Typography.Title
+        level={compact ? 5 : 5}
+        style={{
+          margin: 0,
+          color: "#102A43",
+          maxWidth: compact ? 150 : "100%",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {compact ? "MedBill" : "Medicine Billing Management"}
+      </Typography.Title>
 
-      {/* Right */}
-      <div className="flex items-center gap-4">
-        {me && (
-          <div className="text-right">
-            <p className="text-sm font-medium text-gray-800">
-              {me.name}
-            </p>
-            <p className="text-xs text-gray-500">
-              {me.role}
-            </p>
+      <Space size={compact ? 8 : 12}>
+        <Avatar style={{ backgroundColor: "#1E6F5C" }} icon={<UserOutlined />} />
+        <div style={{ lineHeight: 1.1, minWidth: 0 }}>
+          <Typography.Text strong>{profile?.name || "User"}</Typography.Text>
+          <div>
+            <Tag color="green" style={{ marginTop: 4, borderRadius: 999 }}>
+              {me?.role || "USER"}
+            </Tag>
           </div>
-        )}
-
-        <button
-          onClick={() => logout()}
-          className="px-3 py-1.5 text-sm rounded-md bg-red-500 text-white hover:bg-red-600 transition"
-        >
-          Logout
-        </button>
-      </div>
+        </div>
+      </Space>
     </div>
   );
 };

@@ -59,3 +59,28 @@ export const deleteBillApi = async (id: string) => {
   const { data } = await api.delete(`/bills/${id}`);
   return data;
 };
+
+/* =========================
+   UPDATE BILL
+========================= */
+export const updateBillApi = async ({
+  id,
+  payload,
+}: {
+  id: string;
+  payload: {
+    discount: number;
+    companyId?: string;
+    items?: {
+      productId: string;
+      qty: number;
+      freeQty?: number;
+      rate: number;
+      taxPercent: number;
+      discount?: number;
+    }[];
+  };
+}) => {
+  const { data } = await api.put(`/bills/${id}`, payload);
+  return data;
+};

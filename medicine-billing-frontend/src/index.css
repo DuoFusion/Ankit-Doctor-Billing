@@ -1,5 +1,53 @@
 @import "tailwindcss";
 
+:root {
+  font-family: "Segoe UI", "Inter", "Roboto", sans-serif;
+}
+
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #eef2f6 0%, #e8eff5 100%);
+  color: #1f2937;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.ant-layout {
+  background: transparent !important;
+}
+
+.ant-card {
+  border: 1px solid #e5eaf1 !important;
+  box-shadow: 0 8px 24px rgba(16, 42, 67, 0.06) !important;
+}
+
+.ant-btn-primary {
+  box-shadow: 0 6px 14px rgba(30, 111, 92, 0.25);
+}
+
+.ant-table-thead > tr > th {
+  font-weight: 600 !important;
+}
+
+@media (max-width: 768px) {
+  .ant-card {
+    border-radius: 10px !important;
+  }
+}
+
+.ant-statistic-title {
+  color: #64748b !important;
+  font-weight: 500;
+}
+
+.ant-statistic-content {
+  color: #0f172a !important;
+  font-weight: 700;
+}
+
 .input {
   @apply w-full px-4 py-2 border rounded-lg focus:outline-none
   focus:ring-2 focus:ring-cyan-400;

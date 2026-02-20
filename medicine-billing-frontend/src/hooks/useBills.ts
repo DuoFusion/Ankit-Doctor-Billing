@@ -10,6 +10,7 @@ import {
   getBillByIdApi,
   createBillApi,
   deleteBillApi,
+  updateBillApi,
 } from "../api/billApi";
 
 /* ======================
@@ -77,6 +78,21 @@ export const useDeleteBill = () => {
       qc.invalidateQueries({
         queryKey: ["bills"],
       });
+    },
+  });
+};
+
+/* ======================
+   UPDATE BILL
+====================== */
+export const useUpdateBill = () => {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateBillApi,
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["bills"] });
+      qc.invalidateQueries({ queryKey: ["bill", variables.id] });
     },
   });
 };

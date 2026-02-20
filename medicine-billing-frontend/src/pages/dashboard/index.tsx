@@ -1,34 +1,111 @@
-import StatCard from "../../components/ui/StatCard";
+import { Card, Col, Grid, Row, Statistic, Table, Typography } from "antd";
 import { ROLE } from "../../Constants";
 import { useMe } from "../../hooks/useMe";
+import { useBills } from "../../hooks/useBills";
+import { useCategories } from "../../hooks/useCategories";
+import { useCompanies } from "../../hooks/useCompanies";
+import { useProducts } from "../../hooks/useProducts";
+import { useUsers } from "../../hooks/useUsers";
 
 const Dashboard = () => {
+  const screens = Grid.useBreakpoint();
+  const isMobile = !screens.md;
   const { data: user, isLoading } = useMe();
+  const isAdmin = user?.role === ROLE.ADMIN;
+
+  const companiesQuery = useCompanies(1, 1, "");
+  const productsQuery = useProducts(1, 1, "");
+  const categoriesQuery = useCategories(1, 1, "");
+  const billsQuery = useBills(1, 5, "");
+  const usersQuery = useUsers(1, 1, "");
 
   if (isLoading) return <div>Loading...</div>;
   if (!user) return null;
 
-  const isAdmin = user.role === ROLE.ADMIN;
+  const totalCompanies = companiesQuery.data?.pagination?.total ?? 0;
+  const totalProducts = productsQuery.data?.pagination?.total ?? 0;
+  const totalCategories = categoriesQuery.data?.pagination?.total ?? 0;
+  const totalBills = billsQuery.data?.pagination?.total ?? 0;
+  const totalUsers = usersQuery.data?.pagination?.total ?? 0;
+  const recentBills = billsQuery.data?.data ?? [];
+
+  const billColumns = [
+    { title: "Bill No", dataIndex: "billNo", key: "billNo" },
+    {
+      title: "Company",
+      key: "company",
+      render: (_: any, record: any) => record.companyId?.companyName || "-",
+    },
+    ...(isAdmin
+      ? [
+          {
+            title: "Created By",
+            key: "createdBy",
+            render: (_: any, record: any) => record.userId?.name || "-",
+          },
+        ]
+      : []),
+    {
+      title: "Date",
+      key: "date",
+      render: (_: any, record: any) =>
+        record.createdAt ? new Date(record.createdAt).toLocaleDateString() : "-",
+    },
+    {
+      title: "Total",
+      key: "total",
+      align: "right" as const,
+      render: (_: any, record: any) => `Rs ${Number(record.grandTotal || 0).toFixed(2)}`,
+    },
+  ];
+
+  const cards = isAdmin
+    ? [
+        { title: "Total Medicines", value: totalProducts },
+        { title: "Total Companies", value: totalCompanies },
+        { title: "Total Categories", value: totalCategories },
+        { title: "Total Users", value: totalUsers },
+      ]
+    : [
+        { title: "My Medicines", value: totalProducts },
+        { title: "My Companies", value: totalCompanies },
+        { title: "My Categories", value: totalCategories },
+        { title: "My Bills", value: totalBills },
+      ];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-slate-800">
+    <div>
+      <Typography.Title level={3} style={{ marginTop: 0 }}>
         Dashboard
-      </h1>
+      </Typography.Title>
 
-      {isAdmin ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard title="Total Medicines" value="120" />
-          <StatCard title="Total Companies" value="18" />
-          <StatCard title="Today Sales" value="₹ 8,450" />
-          <StatCard title="Low Stock Items" value="6" />
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <StatCard title="Today Purchase" value="₹ 1,250" />
-          <StatCard title="Total Bills" value="14" />
-        </div>
-      )}
+      <Row gutter={[16, 16]}>
+        {cards.map((card, idx) => (
+          <Col xs={24} sm={12} lg={6} key={card.title}>
+            <Card
+              style={{
+                background:
+                  idx % 2 === 0
+                    ? "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)"
+                    : "linear-gradient(135deg, #f8fffc 0%, #edf7f4 100%)",
+              }}
+            >
+              <Statistic title={card.title} value={card.value} valueStyle={{ color: "#102A43" }} />
+            </Card>
+          </Col>
+        ))}
+      </Row>
+
+      <Card style={{ marginTop: 16 }} title="Recent Bills">
+        <Table
+          rowKey="_id"
+          columns={billColumns}
+          dataSource={recentBills}
+          size={isMobile ? "small" : "middle"}
+          pagination={false}
+          scroll={{ x: "max-content" }}
+        />
+      </Card>
     </div>
   );
 };

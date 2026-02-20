@@ -1,6 +1,13 @@
 export type Company = {
   _id: string;
-  userId: string;
+  userId:
+    | string
+    | {
+        _id?: string;
+        name?: string;
+        email?: string;
+        role?: string;
+      };
   companyName: string;
   gstNumber: string;
   address?: string;

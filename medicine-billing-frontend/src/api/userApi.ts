@@ -52,6 +52,8 @@ export const getProfileApi = async () => {
 export const updateProfileApi = async (data: {
   name: string;
   email: string;
+  phone?: string;
+  address?: string;
 }) => {
   const res = await api.put("/users/me", data);
   return res.data.user as User;
@@ -60,5 +62,26 @@ export const updateProfileApi = async (data: {
 // DELETE ACCOUNT
 export const deleteAccountApi = async () => {
   const res = await api.delete("/users/me");
+  return res.data;
+};
+
+// ADMIN → CREATE USER
+export const createUserApi = async (data: {
+  name: string;
+  email: string;
+  password: string;
+  phone?: string;
+  role?: string;
+}) => {
+  const res = await api.post(AUTH_API.USERS, data);
+  return res.data;
+};
+
+// CHANGE PASSWORD
+export const changePasswordApi = async (data: {
+  oldPassword: string;
+  newPassword: string;
+}) => {
+  const res = await api.put("/users/me/password", data);
   return res.data;
 };

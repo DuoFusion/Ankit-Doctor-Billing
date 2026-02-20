@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { Alert, Button, Card, Form, Input, Typography, message } from "antd";
+import { MailOutlined, SafetyOutlined } from "@ant-design/icons";
 import { useAuth } from "../../hooks/useAuth";
 import type { VerifyOtpPayload } from "../../types";
 import { ROUTES } from "../../Constants";
@@ -10,72 +12,83 @@ const VerifyOtp: React.FC = () => {
   const { verifyOtp, loading } = useAuth();
 
   const emailFromState = location.state?.email || "";
+  const otpSent = Boolean(location.state?.otpSent);
 
   const [formData, setFormData] = useState<VerifyOtpPayload>({
     email: emailFromState,
     otp: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     try {
-      await verifyOtp(formData)
-      alert("OTP verified successfully!");
+      await verifyOtp(formData);
+      message.success("OTP verified successfully");
       navigate(ROUTES.DASHBOARD);
-      
     } catch (error: any) {
-      alert("OTP verification failed: " + error.message);
+      message.error(`OTP verification failed: ${error.message}`);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-5"
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        background: "linear-gradient(145deg, #0f2a43 0%, #1e6f5c 50%, #eef2f6 100%)",
+        padding: 16,
+      }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: 430,
+          borderRadius: 16,
+          boxShadow: "0 20px 40px rgba(15,42,67,0.25)",
+        }}
       >
-        <h2 className="text-2xl font-semibold text-center">
+        <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 4 }}>
           Verify OTP
-        </h2>
+        </Typography.Title>
+        <Typography.Paragraph style={{ textAlign: "center", color: "#64748b", marginBottom: 20 }}>
+          Enter the verification code sent to your email
+        </Typography.Paragraph>
 
-        {/* Email readonly */}
-        <input
-          type="email"
-          name="email"
-          value={formData.email}
-          readOnly
-          className="w-full p-3 border rounded-lg bg-gray-100 cursor-not-allowed"
-        />
+        {otpSent && (
+          <Alert
+            type="success"
+            showIcon
+            icon={<MailOutlined />}
+            message={`OTP sent to ${formData.email}`}
+            style={{ marginBottom: 16, borderRadius: 10 }}
+          />
+        )}
 
-        <input
-          type="text"
-          name="otp"
-          placeholder="Enter OTP"
-          value={formData.otp}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-purple-500"
-        />
+        <Form layout="vertical" onFinish={handleSubmit} requiredMark={false}>
+          <Form.Item label="Email">
+            <Input value={formData.email} readOnly />
+          </Form.Item>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition"
-        >
-          {loading ? "Verifying..." : "Verify OTP"}
-        </button>
-      </form>
+          <Form.Item label="OTP" rules={[{ required: true, message: "OTP is required" }]}>
+            <Input
+              prefix={<SafetyOutlined />}
+              placeholder="Enter 6-digit OTP"
+              value={formData.otp}
+              onChange={(e) => setFormData((prev) => ({ ...prev, otp: e.target.value }))}
+              maxLength={6}
+            />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" loading={loading} block size="large">
+            Verify OTP
+          </Button>
+        </Form>
+
+        <Typography.Paragraph style={{ textAlign: "center", marginTop: 16, marginBottom: 0 }}>
+          Wrong email?{" "}
+          <Typography.Link onClick={() => navigate(ROUTES.LOGIN)}>Go back to login</Typography.Link>
+        </Typography.Paragraph>
+      </Card>
     </div>
   );
 };

@@ -10,6 +10,7 @@ import companyRoutes from './Routes/companyRoutes';
 import productRoutes from './Routes/productRoutes';
 import billRoutes from './Routes/billRoutes';
 import userRoutes from "./Routes/user.Routes"
+import categoryRoutes from './Routes/categoryRoutes';
 import cookieParser from "cookie-parser"
 import path from "path"
 
@@ -40,6 +41,7 @@ app.use("/api/companies", companyRoutes)
 app.use("/api/products", productRoutes)
 app.use("/api/bills", billRoutes)
 app.use("/api/users", userRoutes);
+app.use("/api/categories", categoryRoutes);
 app.use("/uploads", express.static("uploads"));
 
 

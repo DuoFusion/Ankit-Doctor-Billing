@@ -29,25 +29,25 @@ export const getProfile = async (req: AuthRequest, res: Response) => {
 export const updateUser = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user._id;
-    const { name, email } = req.body;
+    const { name, email, phone, address } = req.body;
 
-    const user = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { name, email },
+      { name, email, phone, address },
       { new: true }
     ).select("-password");
 
-    if (!user) {
+    if (!updatedUser) {
       return res.status(StatusCode.NOT_FOUND).json({
         message: "User not found",
       });
     }
 
     return res.status(StatusCode.OK).json({
-      message: "User updated successfully",
-      user,
+      message: "Profile updated successfully",
+      user: updatedUser,
     });
-  } catch {
+  } catch (error) {
     return res.status(StatusCode.INTERNAL_ERROR).json({
       message: "Server error",
     });
@@ -96,7 +96,7 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
       search,
     } = req.query;
 
-    const filter: any = {};
+    const filter: any = { isDeleted: false };
 
     // 🔍 Search by name or email
     if (search) {
@@ -104,6 +104,11 @@ export const getAllUsers = async (req: AuthRequest, res: Response) => {
         { name: { $regex: search as string, $options: "i" } },
         { email: { $regex: search as string, $options: "i" } },
       ];
+    }
+
+    // Exclude the requesting admin from the list
+    if (req.user && req.user._id) {
+      filter._id = { $ne: req.user._id };
     }
 
     const skip = (Number(page) - 1) * Number(limit);

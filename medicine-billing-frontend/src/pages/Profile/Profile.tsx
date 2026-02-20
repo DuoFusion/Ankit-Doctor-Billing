@@ -1,68 +1,62 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Avatar, Button, Card, Descriptions, Popconfirm, Space, Tag, Typography } from "antd";
+import { EditOutlined, LockOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useProfile, useDeleteAccount } from "../../hooks/useProfile";
+import { useAuth } from "../../hooks/useAuth";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const { data: user, isLoading } = useProfile();
   const { mutateAsync: deleteAccount, isPending } = useDeleteAccount();
+  const { logout } = useAuth();
 
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
   if (!user) return null;
 
-  const handleDelete = async () => {
-    const ok = confirm("Are you sure? Your account will be deleted.");
-    if (!ok) return;
-    await deleteAccount();
-  };
-
   return (
-    <div className="min-h-[70vh] flex items-center justify-center bg-slate-50">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md border">
-
-        {/* Header */}
-        <div className="text-center mb-6">
-          <div className="w-20 h-20 mx-auto rounded-full bg-cyan-100 text-cyan-600 flex items-center justify-center text-3xl font-bold">
-            {user.name.charAt(0).toUpperCase()}
+    <Card style={{ maxWidth: 760, margin: "0 auto" }}>
+      <Space align="start" style={{ width: "100%", justifyContent: "space-between" }}>
+        <Space>
+          <Avatar size={72} icon={<UserOutlined />} style={{ backgroundColor: "#1E6F5C" }} />
+          <div>
+            <Typography.Title level={4} style={{ margin: 0 }}>
+              {user.name}
+            </Typography.Title>
+            <Typography.Text type="secondary">{user.email}</Typography.Text>
+            <div style={{ marginTop: 8 }}>
+              <Tag color="green">{user.role}</Tag>
+            </div>
           </div>
-          <h1 className="text-xl font-semibold mt-3 text-slate-800">
-            {user.name}
-          </h1>
-          <p className="text-sm text-slate-500">{user.email}</p>
-        </div>
+        </Space>
+      </Space>
 
-        {/* Info */}
-        <div className="space-y-4 text-sm text-slate-700">
-          <div className="flex justify-between">
-            <span className="font-medium">Role</span>
-            <span className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 text-xs">
-              {user.role}
-            </span>
-          </div>
-        </div>
+      <Descriptions style={{ marginTop: 20 }} column={1} bordered size="small">
+        <Descriptions.Item label="Phone">{user.phone || "-"}</Descriptions.Item>
+        <Descriptions.Item label="Address">{user.address || "-"}</Descriptions.Item>
+      </Descriptions>
 
-        {/* Actions */}
-        <Link
-          to={ROUTES.EDITPROFILE}
-          className="
-            block w-full mt-6 text-center bg-cyan-600 text-white py-2.5 rounded-lg
-            hover:bg-cyan-700 transition font-medium
-          "
-        >
+      <Space style={{ marginTop: 16 }}>
+        <Button icon={<EditOutlined />} onClick={() => navigate(ROUTES.EDITPROFILE)}>
           Edit Profile
-        </Link>
-
-        <button
-          onClick={handleDelete}
-          disabled={isPending}
-          className="
-            w-full mt-3 py-2.5 rounded-lg border border-red-500 text-red-600
-            hover:bg-red-50 transition disabled:opacity-50
-          "
+        </Button>
+        <Button icon={<LockOutlined />} onClick={() => navigate(ROUTES.CHANGE_PASSWORD)}>
+          Change Password
+        </Button>
+        <Button icon={<LogoutOutlined />} onClick={() => logout()}>
+          Logout
+        </Button>
+        <Popconfirm
+          title="Delete account?"
+          description="Your account will be deleted."
+          okText="Delete"
+          cancelText="Cancel"
+          onConfirm={() => deleteAccount()}
         >
-          Delete Account
-        </button>
-      </div>
-    </div>
+          <Button danger loading={isPending}>Delete Account</Button>
+        </Popconfirm>
+      </Space>
+    </Card>
   );
 };
 

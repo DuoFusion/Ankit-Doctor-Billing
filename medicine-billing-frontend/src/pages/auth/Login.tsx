@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { Button, Card, Form, Input, Typography, message } from "antd";
+import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useAuth } from "../../hooks/useAuth";
 import type { LoginPayload } from "../../types";
 import { ROUTES } from "../../Constants";
@@ -13,81 +15,76 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const handleSubmit = async () => {
+    try {
+      await login(formData);
+      message.success("OTP sent to your email");
+      navigate(ROUTES.VERIFY_OTP, { state: { email: formData.email, otpSent: true } });
+    } catch (error: any) {
+      message.error(`Login failed: ${error.message}`);
+    }
   };
 
-  const handleSubmit = async (
-  e: React.FormEvent<HTMLFormElement>
-): Promise<void> => {
-  e.preventDefault();
-  try {
-    await login(formData);
-
-    
-    navigate(ROUTES.VERIFY_OTP, {
-      state: { email: formData.email },
-    });
-
-  } catch (error: any) {
-    alert("Login failed: " + error.message);
-  }
-};
-
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-5"
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        background: "linear-gradient(145deg, #0f2a43 0%, #1e6f5c 50%, #eef2f6 100%)",
+        padding: 16,
+      }}
+    >
+      <Card
+        style={{
+          width: "100%",
+          maxWidth: 420,
+          borderRadius: 16,
+          boxShadow: "0 20px 40px rgba(15,42,67,0.25)",
+        }}
       >
-        <h2 className="text-2xl font-semibold text-center">
-          Login
-        </h2>
+        <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 4 }}>
+          Welcome Back
+        </Typography.Title>
+        <Typography.Paragraph style={{ textAlign: "center", color: "#64748b", marginBottom: 24 }}>
+          Login to continue to MedBill Pro
+        </Typography.Paragraph>
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-        />
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-          className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-        />
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition"
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-
-        <p className="text-center text-sm">
-          Don’t have an account?{" "}
-          <Link
-            to="/"
-            className="text-blue-600 font-medium"
+        <Form layout="vertical" onFinish={handleSubmit} requiredMark={false}>
+          <Form.Item
+            label="Email"
+            rules={[{ required: true, message: "Email is required" }]}
           >
-            Register
-          </Link>
-        </p>
-      </form>
+            <Input
+              prefix={<MailOutlined />}
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              placeholder="Enter your email"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Password"
+            rules={[{ required: true, message: "Password is required" }]}
+          >
+            <Input.Password
+              prefix={<LockOutlined />}
+              value={formData.password}
+              onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+              placeholder="Enter your password"
+            />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" loading={loading} block size="large">
+            Login
+          </Button>
+        </Form>
+
+        <Typography.Paragraph style={{ textAlign: "center", marginTop: 16, marginBottom: 0 }}>
+          Forgot your password?{" "}
+          <Link to={ROUTES.FORGOT_PASSWORD}>Reset it here</Link>
+        </Typography.Paragraph>
+      </Card>
     </div>
   );
 };

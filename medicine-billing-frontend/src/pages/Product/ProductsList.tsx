@@ -1,167 +1,160 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, type ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Input,
+  Pagination,
+  Popconfirm,
+  Space,
+  Table,
+  Typography,
+  message,
+} from "antd";
+import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
-import { useMe } from "../../hooks/useMe";
-import { ROUTES } from "../../Constants";
+import { ROLE, ROUTES } from "../../Constants";
 import type { Product } from "../../types/product";
+import { useMe } from "../../hooks/useMe";
 
 const ProductsList = () => {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const [filters, setFilters] = useState({ page: 1, search: "" });
   const limit = 10;
 
-  const { data, isPending } = useProducts(page, limit, search);
-  const { mutate, isPending: deletePending } = useDeleteProduct();
-  const { data: meData } = useMe();
-
-  const isAdmin = meData?.user?.role === "ADMIN";
+  const { data, isPending } = useProducts(filters.page, limit, filters.search);
+  const { mutateAsync: deleteProduct, isPending: deletePending } = useDeleteProduct();
+  const { data: me } = useMe();
+  const isAdmin = me?.role === ROLE.ADMIN;
   const products: Product[] = data?.products ?? [];
+  const pagination = data?.pagination;
 
-  if (isPending) {
-    return <p className="text-center mt-10">Loading...</p>;
-  }
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+      message.success("Product deleted");
+    } catch {
+      message.error("Failed to delete product");
+    }
+  };
+
+  const columns = [
+    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Category", dataIndex: "category", key: "category" },
+    { title: "Type", dataIndex: "productType", key: "productType" },
+    {
+      title: "Company",
+      key: "company",
+      render: (_: any, product: Product) => product.companyId?.companyName || "-",
+    },
+    ...(isAdmin
+      ? [
+          {
+            title: "Created By",
+            key: "createdBy",
+            render: (_: any, product: Product) => {
+              const createdBy = product.createdBy;
+              return createdBy?.name || createdBy?.email || "-";
+            },
+          },
+        ]
+      : []),
+    {
+      title: "Stock",
+      key: "stock",
+      align: "right" as const,
+      render: (_: any, product: Product) => product.stock ?? 0,
+    },
+    {
+      title: "MRP",
+      key: "mrp",
+      align: "right" as const,
+      render: (_: any, product: Product) => `Rs ${Number(product.mrp || 0).toFixed(2)}`,
+    },
+    {
+      title: "GST %",
+      key: "tax",
+      align: "right" as const,
+      render: (_: any, product: Product) => `${Number(product.taxPercent || 0)}%`,
+    },
+    {
+      title: "Price",
+      key: "price",
+      align: "right" as const,
+      render: (_: any, product: Product) => `Rs ${Number(product.price || 0).toFixed(2)}`,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_: any, product: Product) => (
+        <Space>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => navigate(`${ROUTES.PRODUCTS}/${product._id}/edit`)}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete product?"
+            okText="Delete"
+            cancelText="Cancel"
+            onConfirm={() => handleDelete(product._id)}
+          >
+            <Button danger icon={<DeleteOutlined />} loading={deletePending}>
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
-    <div className="p-6">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-semibold">Products</h1>
-
-        <Link
-          to={ROUTES.CREATE_PRODUCT}
-          className="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700"
+    <Card
+      title={<Typography.Title level={4} style={{ margin: 0 }}>Products</Typography.Title>}
+      extra={
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate(ROUTES.CREATE_PRODUCT)}
         >
-          + Add Product
-        </Link>
-      </div>
-
-      {/* Search */}
-      <div className="mb-4">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setPage(1);
+          Add Product
+        </Button>
+      }
+    >
+      <div style={{ marginBottom: 16 }}>
+        <Input.Search
+          placeholder="Search by name, category or type..."
+          allowClear
+          value={filters.search}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setFilters({ page: 1, search: e.target.value });
           }}
-          placeholder="Search by name, category, type..."
-          className="w-full md:w-1/3 px-4 py-2 border rounded"
+          style={{ maxWidth: 360 }}
         />
       </div>
 
-      {/* Empty */}
-      {products.length === 0 && (
-        <p className="text-center text-gray-500 py-10">
-          No products found
-        </p>
-      )}
+      <Table
+        rowKey="_id"
+        loading={isPending}
+        columns={columns}
+        dataSource={products}
+        pagination={false}
+        scroll={{ x: 1200 }}
+      />
 
-      {/* Table */}
-      {products.length > 0 && (
-        <div className="overflow-x-auto bg-white shadow rounded">
-          <table className="min-w-full">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-3 text-left">Name</th>
-                <th className="px-4 py-3 text-left">Category</th>
-                <th className="px-4 py-3 text-left">Type</th>
-                <th className="px-4 py-3 text-left">Company</th>
-
-                {isAdmin && (
-                  <th className="px-4 py-3 text-left">Added By</th>
-                )}
-
-                <th className="px-4 py-3 text-right">Stock</th>
-                <th className="px-4 py-3 text-right">MRP</th>
-                <th className="px-4 py-3 text-right">GST %</th>
-                <th className="px-4 py-3 text-right">Price</th>
-                <th className="px-4 py-3 text-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {products.map((p, index) => (
-                <tr
-                  key={p._id}
-                  className={`border-t ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="px-4 py-3 font-medium">{p.name}</td>
-                  <td className="px-4 py-3">{p.category}</td>
-                  <td className="px-4 py-3">{p.productType}</td>
-                  <td className="px-4 py-3">
-                    {p.companyId?.companyName ?? "—"}
-                  </td>
-
-                  {isAdmin && (
-                    <td className="px-4 py-3 text-sm">
-                      {p.createdBy?.name ?? "—"}
-                    </td>
-                  )}
-
-                  <td className="px-4 py-3 text-right font-semibold">
-                    {p.stock ?? 0}
-                  </td>
-
-                  <td className="px-4 py-3 text-right">
-                    ₹ {p.mrp ?? 0}
-                  </td>
-
-                  <td className="px-4 py-3 text-right">
-                    {p.taxPercent ?? 0} %
-                  </td>
-
-                  <td className="px-4 py-3 text-right font-semibold text-green-700">
-                    ₹ {p.price}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <div className="flex justify-center gap-2">
-                      <Link
-                        to={`${ROUTES.PRODUCTS}/${p._id}/edit`}
-                        className="px-3 py-1 border border-blue-500 text-blue-600 rounded"
-                      >
-                        Edit
-                      </Link>
-
-                      
-                        <button
-                          onClick={() => mutate(p._id)}
-                          disabled={deletePending}
-                          className="px-3 py-1 border border-red-500 text-red-600 rounded disabled:opacity-50"
-                        >
-                          Delete
-                        </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* Pagination */}
-      <div className="flex justify-end gap-3 mt-4">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((p) => p - 1)}
-          className="px-3 py-1 border rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
-
-        <span className="px-3 py-1">Page {page}</span>
-
-        <button
-          onClick={() => setPage((p) => p + 1)}
-          className="px-3 py-1 border rounded"
-        >
-          Next
-        </button>
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "end" }}>
+        <Pagination
+          current={filters.page}
+          pageSize={limit}
+          total={pagination?.total || 0}
+          onChange={(p: number) =>
+            setFilters((prev) => ({ ...prev, page: p }))
+          }
+          showSizeChanger={false}
+        />
       </div>
-    </div>
+    </Card>
   );
 };
 

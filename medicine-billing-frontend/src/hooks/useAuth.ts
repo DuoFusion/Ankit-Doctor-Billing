@@ -1,20 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import {
-  signupApi,
-  loginApi,
-  verifyOtpApi,
-  logoutApi,
-} from "../api/auth.api";
+import { loginApi, verifyOtpApi, logoutApi } from "../api/auth.api";
 import { QUERY_KEYS } from "../Constants";
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const signup = useMutation({
-    mutationFn: signupApi,
-  });
 
   const login = useMutation({
     mutationFn: loginApi,
@@ -46,15 +38,10 @@ export const useAuth = () => {
   });
 
   return {
-    signup: signup.mutateAsync,
     login: login.mutateAsync,
     verifyOtp: verifyOtp.mutateAsync,
     logout: logout.mutateAsync,
 
-    loading:
-      signup.isPending ||
-      login.isPending ||
-      verifyOtp.isPending ||
-      logout.isPending,
+    loading: login.isPending || verifyOtp.isPending || logout.isPending,
   };
 };

@@ -1,94 +1,142 @@
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Card,
+  Input,
+  Pagination,
+  Popconfirm,
+  Space,
+  Table,
+  Typography,
+} from "antd";
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { useBills, useDeleteBill } from "../../hooks/useBills";
-import { ROUTES } from "../../Constants";
+import { ROLE, ROUTES } from "../../Constants";
+import { useMe } from "../../hooks/useMe";
 
 const BillList = () => {
   const navigate = useNavigate();
+  const [filters, setFilters] = useState({ page: 1, search: "" });
+  const limit = 10;
 
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
-
-  const { data, isLoading } = useBills(page, 10, search);
+  const { data, isLoading } = useBills(filters.page, limit, filters.search);
   const { mutate } = useDeleteBill();
+  const { data: me } = useMe();
+  const isAdmin = me?.role === ROLE.ADMIN;
 
-  if (isLoading) return <p>Loading...</p>;
+  const rows = data?.data ?? [];
+  const pagination = data?.pagination;
+  const getCompanyName = (bill: any) =>
+    bill?.companyId?.companyName || bill?.companyId?.name || "-";
+  const getUserLabel = (bill: any) => {
+    const userName = bill?.userId?.name || bill?.createdBy?.name || "";
+    const userEmail = bill?.userId?.email || bill?.createdBy?.email || "";
+    if (!userName) return "-";
+    return userEmail ? `${userName} (${userEmail})` : userName;
+  };
+
+  const columns = [
+    { title: "Bill No", dataIndex: "billNo", key: "billNo" },
+    {
+      title: "Company",
+      key: "company",
+      render: (_: any, bill: any) => getCompanyName(bill),
+    },
+    ...(isAdmin
+      ? [
+          {
+            title: "Added By",
+            key: "addedBy",
+            render: (_: any, bill: any) => getUserLabel(bill),
+          },
+        ]
+      : []),
+    {
+      title: "Total",
+      key: "total",
+      align: "right" as const,
+      render: (_: any, bill: any) => `Rs ${Number(bill.grandTotal || 0).toFixed(2)}`,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_: any, bill: any) => (
+        <Space>
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => navigate(`${ROUTES.BILLING}/${bill._id}`)}
+          >
+            View
+          </Button>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => navigate(ROUTES.BILL_EDIT.replace(":id", bill._id))}
+          >
+            Edit
+          </Button>
+          <Popconfirm
+            title="Delete bill?"
+            description="This action cannot be undone."
+            okText="Delete"
+            cancelText="Cancel"
+            onConfirm={() => mutate(bill._id)}
+          >
+            <Button danger icon={<DeleteOutlined />}>
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-4">
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search bill no"
-          className="border px-3 py-2 rounded"
-        />
-
-        <button
+    <Card
+      title={<Typography.Title level={4} style={{ margin: 0 }}>Billing</Typography.Title>}
+      extra={
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
           onClick={() => navigate(ROUTES.CREATE_BILL)}
-          className="bg-teal-600 text-white px-4 py-2 rounded"
         >
-          + New Bill
-        </button>
+          New Bill
+        </Button>
+      }
+    >
+      <div style={{ marginBottom: 16 }}>
+        <Input.Search
+          placeholder="Search bill number"
+          allowClear
+          value={filters.search}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => {
+            setFilters({ page: 1, search: e.target.value });
+          }}
+          style={{ maxWidth: 360 }}
+        />
       </div>
 
-      <table className="w-full border">
-        <thead>
-          <tr className="bg-gray-100 text-center">
-            <th>Bill No</th>
-            <th>Company</th>
-            <th>Added By</th>
-            <th>Total</th>
-            <th>Action</th>
-          </tr>
-        </thead>
+      <Table
+        rowKey="_id"
+        loading={isLoading}
+        columns={columns}
+        dataSource={rows}
+        pagination={false}
+        scroll={{ x: 900 }}
+      />
 
-        <tbody>
-          {data?.data.map((b: any) => (
-            <tr key={b._id} className="border-t text-center">
-              <td>{b.billNo}</td>
-
-              {/* ✅ Company name */}
-              <td>{b.companyId?.name || "-"}</td>
-
-              {/* ✅ User name */}
-              <td>{b.userId?.name || "-"}</td>
-
-              <td>₹ {b.grandTotal.toFixed(2)}</td>
-
-              <td className="space-x-3">
-                <button
-                  onClick={() =>
-                    navigate(`${ROUTES.BILLING}/${b._id}`)
-                  }
-                  className="text-blue-600"
-                >
-                  View
-                </button>
-
-                <button
-                  onClick={() => mutate(b._id)}
-                  className="text-red-600"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="flex justify-center gap-3 mt-4">
-        <button onClick={() => setPage(p => Math.max(p - 1, 1))}>
-          Prev
-        </button>
-        <span>{page}</span>
-        <button onClick={() => setPage(p => p + 1)}>
-          Next
-        </button>
+      <div style={{ marginTop: 16, display: "flex", justifyContent: "end" }}>
+        <Pagination
+          current={filters.page}
+          pageSize={limit}
+          total={pagination?.total || 0}
+          onChange={(p: number) =>
+            setFilters((prev) => ({ ...prev, page: p }))
+          }
+          showSizeChanger={false}
+        />
       </div>
-    </div>
+    </Card>
   );
 };
 

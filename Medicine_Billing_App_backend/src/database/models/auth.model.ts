@@ -5,6 +5,8 @@ export interface IAuth extends Document {
   name: string;
   email: string;
   password: string;
+  phone: string;
+  address: string;
   role: ROLE;
   isDeleted: boolean;
 }
@@ -26,6 +28,14 @@ const authSchema = new mongoose.Schema<IAuth>(
     password: {
       type: String,
       required: true, // ✅ FIX
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    address: {
+      type: String,
+      trim: true,
     },
     role: {
       type: String,

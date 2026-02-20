@@ -1,139 +1,87 @@
-import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Card, Form, Input, Typography, Upload, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useCompanies, useUpdateCompany } from "../../hooks/useCompanies";
 
 const EditCompany = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, isLoading } = useCompanies(1, 100, "" );
-  const { mutate, isPending } = useUpdateCompany();
+  const [form] = Form.useForm();
+  const { data, isLoading } = useCompanies(1, 100, "");
+  const { mutateAsync, isPending } = useUpdateCompany();
+  const [logo, setLogo] = useState<File | null>(null);
 
   const company = data?.companies.find((c) => c._id === id);
 
-  const [form, setForm] = useState({
-    companyName: "",
-    gstNumber: "",
-    email: "",
-    phone: "",
-    state: "",
-    address: "",
-  });
-
-  const [logo, setLogo] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-
   useEffect(() => {
-    if (company) {
-      setForm({
-        companyName: company.companyName || "",
-        gstNumber: company.gstNumber || "",
-        email: company.email || "",
-        phone: company.phone || "",
-        state: company.state || "",
-        address: company.address || "",
-      });
+    if (!company) return;
+    form.setFieldsValue({
+      companyName: company.companyName || "",
+      gstNumber: company.gstNumber || "",
+      email: company.email || "",
+      phone: company.phone || "",
+      state: company.state || "",
+      address: company.address || "",
+    });
+  }, [company, form]);
 
-      if (company.logo) {
-        setPreview(
-          `${import.meta.env.VITE_API_URL}/uploads/${company.logo}`
-        );
-      }
-    }
-  }, [company]);
-
-  if (isLoading) return <p className="text-center mt-10">Loading...</p>;
-  if (!company) return <p className="text-center mt-10">Company not found</p>;
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setLogo(file);
-    setPreview(URL.createObjectURL(file));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSubmit = async (values: any) => {
+    if (!company) return;
     const formData = new FormData();
-    Object.entries(form).forEach(([key, value]) =>
-      formData.append(key, value)
-    );
+    Object.entries(values).forEach(([key, value]) => formData.append(key, String(value || "")));
+    if (logo) formData.append("logo", logo);
 
-    if (logo) {
-      formData.append("logo", logo);
+    try {
+      await mutateAsync({ id: company._id, formData });
+      message.success("Company updated");
+      navigate(`${ROUTES.COMPANIES}/${company._id}`);
+    } catch (error: any) {
+      message.error(error?.response?.data?.message || "Failed to update company");
     }
-
-    mutate(
-      { id: company._id, formData },
-      {
-        onSuccess: () => {
-          navigate(`${ROUTES.COMPANIES}/${company._id}`);
-        },
-      }
-    );
   };
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!company) return <p>Company not found</p>;
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <Link
-        to={`${ROUTES.COMPANIES}/${company._id}`}
-        className="text-cyan-600 text-sm hover:underline"
-      >
-        ← Back to Details
-      </Link>
-
-      <div className="bg-white mt-4 p-8 rounded-2xl shadow">
-        <h1 className="text-2xl font-semibold mb-6">Edit Company</h1>
-
-        {/* LOGO */}
-        <div className="mb-6">
-          <div className="h-28 w-28 border rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
-            {preview ? (
-              <img
-                src={preview}
-                alt="Company Logo"
-                className="object-contain h-full w-full"
-              />
-            ) : (
-              <span className="text-xs text-gray-400">No Logo</span>
-            )}
-          </div>
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleLogoChange}
-            className="mt-2 text-sm"
-          />
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input name="companyName" value={form.companyName} onChange={handleChange} className="input" />
-          <input name="gstNumber" value={form.gstNumber} onChange={handleChange} className="input" />
-          <input name="email" value={form.email} onChange={handleChange} className="input" />
-          <input name="phone" value={form.phone} onChange={handleChange} className="input" />
-          <input name="state" value={form.state} onChange={handleChange} className="input" />
-          <textarea name="address" value={form.address} onChange={handleChange} className="input h-24" />
-
-          <button
-            type="submit"
-            disabled={isPending}
-            className="w-full bg-cyan-600 text-white py-2 rounded-lg
-            hover:bg-cyan-700 disabled:opacity-60"
-          >
-            {isPending ? "Updating..." : "Update Company"}
-          </button>
-        </form>
-      </div>
-    </div>
+    <Card style={{ maxWidth: 820, margin: "0 auto" }}>
+      <Typography.Title level={4}>Edit Company</Typography.Title>
+      <Form form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
+        <Form.Item name="companyName" label="Company Name" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="gstNumber" label="GST Number" rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="email" label="Email">
+          <Input />
+        </Form.Item>
+        <Form.Item name="phone" label="Phone">
+          <Input />
+        </Form.Item>
+        <Form.Item name="state" label="State">
+          <Input />
+        </Form.Item>
+        <Form.Item name="address" label="Address">
+          <Input.TextArea rows={4} />
+        </Form.Item>
+        <Form.Item label="Logo">
+          <Upload beforeUpload={(file) => { setLogo(file); return false; }} maxCount={1}>
+            <Button icon={<UploadOutlined />}>Change Logo</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item style={{ marginBottom: 0 }}>
+          <Button onClick={() => navigate(`${ROUTES.COMPANIES}/${company._id}`)} style={{ marginRight: 8 }}>
+            Cancel
+          </Button>
+          <Button type="primary" htmlType="submit" loading={isPending}>
+            Update Company
+          </Button>
+        </Form.Item>
+      </Form>
+    </Card>
   );
 };
 

@@ -10,17 +10,23 @@ import CompaniesList from "../pages/companies/CompaniesList";
 import CreateCompany from "../pages/companies/CreateCompany";
 import CompanyDetails from "../pages/companies/CompanyDetails";
 import EditCompany from "../pages/companies/EditCompany";
+import CategoriesList from "../pages/categories/CategoriesList";
+import CreateCategory from "../pages/categories/CreateCategory";
+import EditCategory from "../pages/categories/EditCategory";
 
 // Profile
 import Profile from "../pages/Profile/Profile";
 import EditProfile from "../pages/Profile/EditProfile";
+import ChangePassword from "../pages/Profile/ChangePassword";
 
 // Admin
 import Users from "../pages/admin/Users";
+import CreateUser from "../pages/admin/CreateUser";
 
 // Auth
 import Login from "../pages/auth/Login";
-import Signup from "../pages/auth/Signup";
+import ForgotPassword from "../pages/auth/ForgotPassword";
+import ResetPassword from "../pages/auth/ResetPassword";
 import VerifyOtp from "../pages/auth/VerifyOtp";
 
 import { ROUTES } from "../Constants";
@@ -29,6 +35,7 @@ import Layout from "../components/layout/Layout";
 import BillDetails from "../pages/billing/BillDetails";
 import CreateBill from "../pages/billing/CreateBill";
 import BillList from "../pages/billing/BillList";
+import EditBill from "../pages/billing/EditBill";
 export const PageRoutes = [
   /* ============ PUBLIC ============ */
   {
@@ -36,8 +43,12 @@ export const PageRoutes = [
     element: <Login />,
   },
   {
-    path: ROUTES.SIGNUP,
-    element: <Signup />,
+    path: ROUTES.FORGOT_PASSWORD,
+    element: <ForgotPassword />,
+  },
+  {
+    path: ROUTES.RESET_PASSWORD,
+    element: <ResetPassword />,
   },
   {
     path: ROUTES.VERIFY_OTP,
@@ -88,6 +99,20 @@ export const PageRoutes = [
             element: <EditCompany />,
           },
 
+          /* CATEGORIES */
+          {
+            path: ROUTES.CATEGORIES,
+            element: <CategoriesList />,
+          },
+          {
+            path: ROUTES.CREATE_CATEGORY,
+            element: <CreateCategory />,
+          },
+          {
+            path: `${ROUTES.CATEGORIES}/:id/edit`,
+            element: <EditCategory />,
+          },
+
           /* PROFILE */
           {
             path: ROUTES.PROFILE,
@@ -96,6 +121,10 @@ export const PageRoutes = [
           {
             path: ROUTES.EDITPROFILE,
             element: <EditProfile />,
+          },
+          {
+            path: ROUTES.CHANGE_PASSWORD,
+            element: <ChangePassword />,
           },
 
           /* BILLING */
@@ -106,6 +135,10 @@ export const PageRoutes = [
           {
             path: ROUTES.CREATE_BILL,
             element: <CreateBill />,
+          },
+          {
+            path: ROUTES.BILL_EDIT,
+            element: <EditBill />,
           },
           {
             path: `${ROUTES.BILL_DETAILS(":id")}`,
@@ -119,6 +152,10 @@ export const PageRoutes = [
               {
                 path: ROUTES.USERS,
                 element: <Users />,
+              },
+              {
+                path: ROUTES.CREATE_USER,
+                element: <CreateUser />,
               },
             ],
           },
