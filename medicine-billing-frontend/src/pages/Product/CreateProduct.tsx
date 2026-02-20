@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, InputNumber, Select, Typography, message } from "antd";
+import { Button, Card, Form, Input, InputNumber, Select, Typography, App } from "antd";
 import { useCompanies } from "../../hooks/useCompanies";
 import { useCreateProduct } from "../../hooks/useProducts";
 import { ROUTES } from "../../Constants";
 import { useCategoryDropdown } from "../../hooks/useCategories";
 
 const CreateProduct = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const { data: companyData, isLoading } = useCompanies(1, 100, "");

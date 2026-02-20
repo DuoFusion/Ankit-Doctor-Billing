@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { Button, Card, Form, Input, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useChangePassword } from "../../hooks/useProfile";
 
 const ChangePassword = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const changePasswordMutation = useChangePassword();
   const [form] = Form.useForm();

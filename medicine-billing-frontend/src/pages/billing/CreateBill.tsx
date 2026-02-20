@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { message } from "antd";
+import { App } from "antd";
 import BillForm from "../../components/billing/BillForm";
 import { ROUTES } from "../../Constants";
 import { useCompanies } from "../../hooks/useCompanies";
@@ -7,6 +7,7 @@ import { useProducts } from "../../hooks/useProducts";
 import { useCreateBill } from "../../hooks/useBills";
 
 const CreateBill = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const { data: companyData } = useCompanies(1, 100, "");
   const { data: productData } = useProducts(1, 200, "");

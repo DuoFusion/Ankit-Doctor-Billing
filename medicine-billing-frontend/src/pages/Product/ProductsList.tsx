@@ -9,7 +9,7 @@ import {
   Space,
   Table,
   Typography,
-  message,
+  App,
 } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
@@ -18,6 +18,7 @@ import type { Product } from "../../types/product";
 import { useMe } from "../../hooks/useMe";
 
 const ProductsList = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ page: 1, search: "" });
   const limit = 10;

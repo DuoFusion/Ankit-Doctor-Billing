@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
 import App from "./App";
 import "antd/dist/reset.css";
 import "./index.css";
@@ -45,7 +45,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           },
         }}
       >
+        <AntdApp>
         <App />
+      </AntdApp>
       </ConfigProvider>
     </QueryClientProvider>
   </React.StrictMode>

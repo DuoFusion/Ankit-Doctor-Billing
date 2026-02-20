@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, Typography, Upload, message } from "antd";
+import { Button, Card, Form, Input, Typography, Upload, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useCompanies, useUpdateCompany } from "../../hooks/useCompanies";
 
 const EditCompany = () => {
+  const { message } = App.useApp();
   const { id } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();

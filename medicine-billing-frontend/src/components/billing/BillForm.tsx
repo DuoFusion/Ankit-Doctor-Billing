@@ -8,7 +8,7 @@ import {
   Space,
   Table,
   Typography,
-  message,
+  App,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
@@ -64,6 +64,7 @@ const BillForm = ({
   onSubmit,
   onCancel,
 }: BillFormProps) => {
+  const { message } = App.useApp();
   const [companyId, setCompanyId] = useState(initialCompanyId);
   const [discount, setDiscount] = useState(initialDiscount);
   const [items, setItems] = useState<BillFormItem[]>(normalizeItems(initialItems));

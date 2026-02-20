@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { message } from "antd";
+import { App } from "antd";
 import BillForm from "../../components/billing/BillForm";
 import { ROUTES } from "../../Constants";
 import { useBill, useUpdateBill } from "../../hooks/useBills";
@@ -8,6 +8,7 @@ import { useCompanies } from "../../hooks/useCompanies";
 import { useProducts } from "../../hooks/useProducts";
 
 const EditBill = () => {
+  const { message } = App.useApp();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data: billData, isLoading } = useBill(id);

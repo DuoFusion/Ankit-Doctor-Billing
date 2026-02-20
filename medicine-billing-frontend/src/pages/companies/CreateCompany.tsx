@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, Typography, Upload, message } from "antd";
+import { Button, Card, Form, Input, Typography, Upload, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useCreateCompany } from "../../hooks/useCompanies";
 
 const CreateCompany = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const { mutateAsync, isPending } = useCreateCompany();
   const [form] = Form.useForm();

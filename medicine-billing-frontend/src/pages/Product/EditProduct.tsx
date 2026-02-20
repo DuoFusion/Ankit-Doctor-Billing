@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, Form, Input, InputNumber, Select, Typography, message } from "antd";
+import { Button, Card, Form, Input, InputNumber, Select, Typography, App } from "antd";
 import { useCompanies } from "../../hooks/useCompanies";
 import { useUpdateProduct, useProduct } from "../../hooks/useProducts";
 import { ROUTES } from "../../Constants";
 import { useCategoryDropdown } from "../../hooks/useCategories";
 
 const UpdateProduct = () => {
+  const { message } = App.useApp();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [form] = Form.useForm();

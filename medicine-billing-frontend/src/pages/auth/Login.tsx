@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { Button, Card, Form, Input, Typography, App } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useAuth } from "../../hooks/useAuth";
 import type { LoginPayload } from "../../types";
 import { ROUTES } from "../../Constants";
 
 const Login: React.FC = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const { login, loading } = useAuth();
 

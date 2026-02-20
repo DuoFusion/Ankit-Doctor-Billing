@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, Typography, message } from "antd";
+import { Button, Card, Form, Input, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useProfile, useUpdateProfile } from "../../hooks/useProfile";
 
 const EditProfile = () => {
+  const { message } = App.useApp();
   const { data: user } = useProfile();
   const { mutateAsync, isPending } = useUpdateProfile();
   const navigate = useNavigate();

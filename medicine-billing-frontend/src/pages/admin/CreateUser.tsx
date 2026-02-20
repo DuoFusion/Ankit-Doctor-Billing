@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Form, Input, Select, Typography, message } from "antd";
+import { Button, Card, Form, Input, Select, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useCreateUser } from "../../hooks/useUsers";
 
 const CreateUser: React.FC = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const { mutateAsync: createUser, isPending } = useCreateUser();
   const [form] = Form.useForm();
