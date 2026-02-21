@@ -1,27 +1,40 @@
 import {Request, Response, NextFunction } from "express";
-import { StatusCode } from "../common";
+import { ApiResponse, StatusCode } from "../common";
+import { responseMessage } from "./response";
 
 export const roleCheck = (allowedRoles: string[]) => {
   return (req: any, res: Response, next: NextFunction) => {
     try {
       // Check if user exists
       if (!req.user) {
-        return res.status(StatusCode.UNAUTHORIZED).json({
-          message: "Unauthorized. Please login first.",
-        });
+        return res
+          .status(StatusCode.UNAUTHORIZED)
+          .json(
+            ApiResponse.error(
+              responseMessage.accessDenied,
+              null,
+              StatusCode.UNAUTHORIZED
+            )
+          );
       }
 
       // Check if role allowed
       if (!allowedRoles.includes(req.user.role)) {
-        return res.status(StatusCode.FORBIDDEN).json({
-          message: "Access denied. You do not have permission.",
-        });
+        return res
+          .status(StatusCode.FORBIDDEN)
+          .json(
+            ApiResponse.error(
+              responseMessage.accessDenied,
+              null,
+              StatusCode.FORBIDDEN
+            )
+          );
       }
 
       next();
     } catch (error) {
       return res.status(StatusCode.INTERNAL_ERROR).json({
-        message: "Internal server error",
+        ...ApiResponse.error(responseMessage.internalServerError, error, StatusCode.INTERNAL_ERROR),
       });
     }
   };

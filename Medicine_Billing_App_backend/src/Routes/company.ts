@@ -6,9 +6,9 @@ import {
   updateCompany,
   deleteCompany,
 } from "../controllers/company";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { upload } from "../middleware/upload.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { upload } from "../middleware/upload";
+import { validate } from "../middleware/joi";
 import {
   companyIdParamSchema,
   createCompanySchema,

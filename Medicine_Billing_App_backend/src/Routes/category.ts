@@ -7,8 +7,8 @@ import {
   deleteCategory,
   getActiveCategoriesForDropdown,
 } from "../controllers/category/index";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { validate } from "../middleware/joi";
 import {
   categoryIdParamSchema,
   categoryQuerySchema,

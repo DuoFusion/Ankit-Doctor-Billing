@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
+import { ApiResponse, StatusCode } from "../common";
+import { responseMessage } from "../helper";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -16,7 +18,9 @@ export const authMiddleware = (
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "Unauthorized" });
+    return res
+      .status(StatusCode.UNAUTHORIZED)
+      .json(ApiResponse.error(responseMessage.accessDenied, null, StatusCode.UNAUTHORIZED));
   }
 
   const token = authHeader.split(" ")[1];
@@ -37,6 +41,8 @@ export const authMiddleware = (
 
     next();
   } catch {
-    return res.status(401).json({ message: "Invalid or expired token" });
+    return res
+      .status(StatusCode.UNAUTHORIZED)
+      .json(ApiResponse.error(responseMessage.invalidToken, null, StatusCode.UNAUTHORIZED));
   }
 };

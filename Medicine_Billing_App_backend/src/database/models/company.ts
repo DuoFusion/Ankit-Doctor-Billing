@@ -1,9 +1,9 @@
-//import { Types } from "joi";
-import { Schema, model, Document,Types } from "mongoose";
+import { Schema, model, Document, Types } from "mongoose";
 import { MODEL } from "../../common";
+
 export interface ICompany extends Document {
-  userId:Types.ObjectId;
-  companyName: string;
+  userId: Types.ObjectId;
+  name: string;
   gstNumber: string;
   address?: string;
   phone?: string;
@@ -11,17 +11,17 @@ export interface ICompany extends Document {
   state?: string;
   logo?: string;
   isActive: boolean;
-  isDeleted:Boolean
+  isDeleted: boolean;
 }
 
 const companySchema = new Schema<ICompany>(
   {
     userId: {
-      type: Schema.Types.ObjectId,  
-      ref:MODEL.USER,
-      required: true
+      type: Schema.Types.ObjectId,
+      ref: MODEL.USER,
+      required: true,
     },
-    companyName: {
+    name: {
       type: String,
       required: true,
       trim: true,
@@ -58,15 +58,13 @@ const companySchema = new Schema<ICompany>(
       type: Boolean,
       default: true,
     },
-    isDeleted:{
-      type:Boolean,
-      default:false
-    }
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-// Optional: index for faster search
-companySchema.index({ gstNumber: 1 });
 
-export const CompanyModel = model<ICompany>("Company", companySchema);
+export const CompanyModel = model<ICompany>(MODEL.COMPANY, companySchema);

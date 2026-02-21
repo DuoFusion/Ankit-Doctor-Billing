@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { CompanyModel } from "../../database/models/company";
 import { responseMessage } from "../../helper";
-import { StatusCode } from "../../common";
-import { AuthRequest } from "../../middleware/auth.middleware";
+import { ApiResponse, StatusCode } from "../../common";
+import { AuthRequest } from "../../middleware/auth";
 
 // ================= CREATE =================
 export const createCompany = async (
@@ -11,24 +11,18 @@ export const createCompany = async (
 ) => {
   try {
     if (!req.user) {
-      return res.status(StatusCode.UNAUTHORIZED).json({
-        message: "Unauthorized",
-      });
+      return res
+        .status(StatusCode.UNAUTHORIZED)
+        .json(ApiResponse.error(responseMessage.accessDenied, null, StatusCode.UNAUTHORIZED));
     }
 
-    const {
-      companyName,
-      gstNumber,
-      address,
-      phone,
-      email,
-      state,
-    } = req.body;
+    const { name: rawName, companyName, gstNumber, address, phone, email, state } = req.body;
+    const name = rawName || companyName;
 
 
     const newCompany = await CompanyModel.create({
       userId: req.user._id,
-      companyName,
+      name,
       gstNumber,
       address,
       phone,
@@ -38,10 +32,12 @@ export const createCompany = async (
       isDeleted: false,
     });
 
-    res.status(201).json(newCompany);
+    return res.status(StatusCode.CREATED).json(ApiResponse.created("Company created successfully", { company: newCompany }));
   } catch (error: any) {
     console.log("CREATE ERROR:", error);
-    res.status(500).json({ message: error.message });
+    return res
+      .status(StatusCode.INTERNAL_ERROR)
+      .json(ApiResponse.error(error.message, error, StatusCode.INTERNAL_ERROR));
   }
 };
 
@@ -72,6 +68,7 @@ export const getAllCompanies = async (
     if (search) {
       filter.$or = [
         { companyName: { $regex: search, $options: "i" } },
+        { name: { $regex: search, $options: "i" } },
         { gstNumber: { $regex: search, $options: "i" } },
         { phone: { $regex: search, $options: "i" } },
         { email: { $regex: search, $options: "i" } },
@@ -89,20 +86,24 @@ export const getAllCompanies = async (
       CompanyModel.countDocuments(filter),
     ]);
 
-    return res.status(StatusCode.OK).json({
-      companies,
-      pagination: {
-        total,
-        page: pageNum,
-        limit: limitNum,
-        totalPages: Math.ceil(total / limitNum),
-      },
-    });
+    return res
+      .status(StatusCode.OK)
+      .json(
+        ApiResponse.success("Companies fetched successfully", {
+          companies,
+          pagination: {
+            total,
+            page: pageNum,
+            limit: limitNum,
+            totalPages: Math.ceil(total / limitNum),
+          },
+        })
+      );
   } catch (error) {
     console.error("GET COMPANIES ERROR:", error);
-    return res.status(StatusCode.INTERNAL_ERROR).json({
-      message: responseMessage.internalServerError,
-    });
+    return res
+      .status(StatusCode.INTERNAL_ERROR)
+      .json(ApiResponse.error(responseMessage.internalServerError, error, StatusCode.INTERNAL_ERROR));
   }
 };
 
@@ -112,7 +113,7 @@ export const getSingleCompany = async (req: any, res: Response) => {
   try {
     if (!req.user) {
       return res.status(StatusCode.UNAUTHORIZED).json({
-        message: "Unauthorized",
+        message: responseMessage.accessDenied,
       });
     }
 
@@ -150,14 +151,14 @@ export const updateCompany = async (req: AuthRequest, res: Response) => {
     const company = await CompanyModel.findById(req.params.id);
 
     if (!company) {
-      return res.status(404).json({ message: "Company not found" });
+      return res.status(404).json({ message: responseMessage.getDataNotFound("Company") });
     }
 
     if (
       req.user?.role !== "admin" &&
       company.userId.toString() !== req.user?._id
     ) {
-      return res.status(403).json({ message: "Not authorized" });
+      return res.status(403).json({ message: responseMessage.accessDenied });
     }
 
     // ❌ prevent logo update
@@ -165,6 +166,7 @@ export const updateCompany = async (req: AuthRequest, res: Response) => {
 
     const allowedFields = [
       "companyName",
+      "name",
       "gstNumber",
       "email",
       "phone",
@@ -174,14 +176,18 @@ export const updateCompany = async (req: AuthRequest, res: Response) => {
 
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {
-        (company as any)[field] = req.body[field];
+        if (field === "companyName") {
+          (company as any).name = req.body[field];
+        } else {
+          (company as any)[field] = req.body[field];
+        }
       }
     });
 
     await company.save();
     res.json(company);
   } catch (error) {
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: responseMessage.internalServerError });
   }
 };
 
@@ -193,7 +199,7 @@ export const deleteCompany = async (req: any, res: Response) => {
   try {
     if (!req.user) {
       return res.status(StatusCode.UNAUTHORIZED).json({
-        message: "Unauthorized",
+        message: responseMessage.accessDenied,
       });
     }
 
@@ -214,7 +220,7 @@ export const deleteCompany = async (req: any, res: Response) => {
 
     if (!company) {
       return res.status(StatusCode.NOT_FOUND).json({
-        message: "Not allowed or company not found",
+        message: responseMessage.getDataNotFound("Company"),
       });
     }
 

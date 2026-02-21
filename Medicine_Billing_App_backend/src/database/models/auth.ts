@@ -11,7 +11,7 @@ export interface IAuth extends Document {
   isDeleted: boolean;
 }
 
-const authSchema = new mongoose.Schema<IAuth>(
+const userSchema = new mongoose.Schema<IAuth>(
   {
     name: {
       type: String,
@@ -53,4 +53,4 @@ const authSchema = new mongoose.Schema<IAuth>(
   }
 );
 
-export default mongoose.model<IAuth>(MODEL.USER, authSchema);
+export default mongoose.model<IAuth>(MODEL.USER, userSchema);

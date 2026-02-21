@@ -1,25 +1,25 @@
 import { Request, Response } from "express";
 import { Product } from "../../database/models/productl";
 import { responseMessage } from "../../helper";
-import { StatusCode } from "../../common";
-import { AuthRequest } from "../../middleware/auth.middleware";
+import { ApiResponse, StatusCode } from "../../common";
+import { AuthRequest } from "../../middleware/auth";
 import mongoose from "mongoose";
 
 /* ================= CREATE PRODUCT ================= */
 export const createProduct = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user) {
-      return res.status(StatusCode.UNAUTHORIZED).json({
-        message: "Unauthorized",
-      });
+      return res
+        .status(StatusCode.UNAUTHORIZED)
+        .json(ApiResponse.error(responseMessage.accessDenied, null, StatusCode.UNAUTHORIZED));
     }
 
     const { companyId } = req.body;
 
     if (!companyId) {
-      return res.status(StatusCode.BAD_REQUEST).json({
-        message: "Company is required",
-      });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("company"), null, StatusCode.BAD_REQUEST));
     }
 
     const product = await Product.create({
@@ -29,14 +29,13 @@ export const createProduct = async (req: AuthRequest, res: Response) => {
       isDeleted: false,
     });
 
-    return res.status(StatusCode.CREATED).json({
-      message: responseMessage.addDataSuccess("Product"),
-      product,
-    });
+    return res
+      .status(StatusCode.CREATED)
+      .json(ApiResponse.created(responseMessage.addDataSuccess("Product"), { product }));
   } catch (error) {
-    return res.status(StatusCode.INTERNAL_ERROR).json({
-      message: responseMessage.internalServerError,
-    });
+    return res
+      .status(StatusCode.INTERNAL_ERROR)
+      .json(ApiResponse.error(responseMessage.internalServerError, error, StatusCode.INTERNAL_ERROR));
   }
 };
 
@@ -62,7 +61,7 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
     }
 
     const product = await Product.findOne(filter)
-      .populate("companyId", "companyName")
+      .populate("companyId", "name companyName")
       .populate("createdBy", "name email role");
 
     if (!product) {
@@ -71,11 +70,11 @@ export const getProductById = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    return res.status(StatusCode.OK).json(product);
+    return res.status(StatusCode.OK).json(ApiResponse.success("Product fetched successfully", { product }));
   } catch (error) {
-    return res.status(StatusCode.INTERNAL_ERROR).json({
-      message: responseMessage.internalServerError,
-    });
+    return res
+      .status(StatusCode.INTERNAL_ERROR)
+      .json(ApiResponse.error(responseMessage.internalServerError, error, StatusCode.INTERNAL_ERROR));
   }
 };
 
@@ -122,7 +121,7 @@ export const getProducts = async (req: AuthRequest, res: Response) => {
 
     const [products, total] = await Promise.all([
       Product.find(filter)
-        .populate("companyId", "companyName")
+        .populate("companyId", "name companyName")
         .populate("createdBy", "name email role")
         .sort({ createdAt: -1 })
         .skip(skip)

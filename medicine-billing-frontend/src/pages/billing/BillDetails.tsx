@@ -18,6 +18,7 @@ const BillView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
+  const isValidBillId = !!id && /^[a-fA-F0-9]{24}$/.test(id);
   const { data, isLoading } = useBill(id!);
   const printRef = useRef<HTMLDivElement>(null);
   const autoDownloadTriggered = useRef(false);
@@ -33,9 +34,9 @@ const BillView = () => {
   const userEmail = bill?.userId?.email || (bill as any)?.createdBy?.email || "-";
   const userPhone = bill?.userId?.phone || (bill as any)?.createdBy?.phone || "-";
   const userAddress = bill?.userId?.address || (bill as any)?.createdBy?.address || "-";
-  const subTotal = Number(bill.subTotal || 0);
-  const totalTax = Number(bill.totalTax || 0);
-  const discountAmount = Number(bill.discount || 0);
+  const subTotal = Number(bill?.subTotal || 0);
+  const totalTax = Number(bill?.totalTax || 0);
+  const discountAmount = Number(bill?.discount || 0);
   const totalBeforeDiscount = subTotal + totalTax;
   const grandTotal = Math.max(0, totalBeforeDiscount - discountAmount);
 
@@ -67,6 +68,14 @@ const BillView = () => {
     autoDownloadTriggered.current = true;
     void handleDownloadPdf();
   }, [location.search, bill]);
+
+  if (!isValidBillId) {
+    return (
+      <Card>
+        <Typography.Text type="danger">Invalid bill link. Please open the bill from billing list.</Typography.Text>
+      </Card>
+    );
+  }
 
   if (isLoading) return <p>Loading...</p>;
   if (!data || !bill) return null;

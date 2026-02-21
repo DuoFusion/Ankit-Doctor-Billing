@@ -6,8 +6,8 @@ import {
   updateBill,
   deleteBill,
 } from "../controllers/bill";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { validate } from "../middleware/joi";
 import { billIdParamSchema, createBillSchema, updateBillSchema } from "../validation";
 
 const router = Router();

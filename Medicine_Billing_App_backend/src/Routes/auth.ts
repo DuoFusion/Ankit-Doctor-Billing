@@ -1,7 +1,7 @@
 import { Router } from "express";
 import{login,verifyOtp,getMe,logout, forgotPassword, resetPassword} from "../controllers/auth/index"
-import { authMiddleware } from "../middleware/auth.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { validate } from "../middleware/joi";
 import { forgotPasswordSchema, loginSchema, resetPasswordSchema, verifyOtpSchema } from "../validation";
 
 const router=Router()

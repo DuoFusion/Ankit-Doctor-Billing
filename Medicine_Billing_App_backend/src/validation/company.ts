@@ -5,15 +5,17 @@ const phone = Joi.string().trim().pattern(/^[0-9]{10}$/);
 const gst = Joi.string().trim().uppercase().pattern(/^[0-9A-Z]{15}$/);
 
 export const createCompanySchema = Joi.object({
-  companyName: Joi.string().trim().min(2).max(120).required(),
+  name: Joi.string().trim().min(2).max(120).optional(),
+  companyName: Joi.string().trim().min(2).max(120).optional(),
   gstNumber: gst.required(),
   email: email.allow("").optional(),
   phone: phone.allow("").optional(),
   state: Joi.string().trim().max(80).allow("").optional(),
   address: Joi.string().trim().max(500).allow("").optional(),
-});
+}).or("name", "companyName");
 
 export const updateCompanySchema = Joi.object({
+  name: Joi.string().trim().min(2).max(120).optional(),
   companyName: Joi.string().trim().min(2).max(120).optional(),
   gstNumber: gst.optional(),
   email: email.allow("").optional(),

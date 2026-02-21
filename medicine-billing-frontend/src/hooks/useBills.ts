@@ -14,6 +14,8 @@ import {
 } from "../Api/billApi";
 import { QUERY_KEYS } from "../Constants";
 
+const isValidObjectId = (id?: string) => !!id && /^[a-fA-F0-9]{24}$/.test(id);
+
 /* ======================
    LIST BILLS
 ====================== */
@@ -39,9 +41,9 @@ export const useBills = (
 ====================== */
 export const useBill = (id?: string) =>
   useQuery({
-    queryKey: QUERY_KEYS.BILL(id!),
-    queryFn: () => getBillByIdApi(id!),
-    enabled: !!id,
+    queryKey: QUERY_KEYS.BILL(id || ""),
+    queryFn: () => getBillByIdApi(id as string),
+    enabled: isValidObjectId(id),
   });
 
 /* ======================

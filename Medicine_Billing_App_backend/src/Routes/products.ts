@@ -7,8 +7,8 @@ import {
   getProductById
 ,
 } from "../controllers/Product/index";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { validate } from "../middleware/joi";
 import {
   createProductSchema,
   productIdParamSchema,

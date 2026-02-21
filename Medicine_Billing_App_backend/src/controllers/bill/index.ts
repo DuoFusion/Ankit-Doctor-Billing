@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import { Bill } from "../../database/models/bill";
 import { BillItem } from "../../database/models/billItem";
 import { Product } from "../../database/models/productl";
+import { ApiResponse, StatusCode } from "../../common";
+import { responseMessage } from "../../helper";
 
 interface AuthRequest extends Request {
   user?: any;
@@ -14,17 +16,23 @@ interface AuthRequest extends Request {
 export const createBill = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res
+        .status(StatusCode.UNAUTHORIZED)
+        .json(ApiResponse.error(responseMessage.accessDenied, null, StatusCode.UNAUTHORIZED));
     }
 
     const { companyId, items, discount = 0 } = req.body;
 
     if (!companyId) {
-      return res.status(400).json({ message: "companyId required" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("company"), null, StatusCode.BAD_REQUEST));
     }
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: "items required" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("items"), null, StatusCode.BAD_REQUEST));
     }
 
     let subTotal = 0;
@@ -36,12 +44,16 @@ export const createBill = async (req: AuthRequest, res: Response) => {
       const it = items[i];
 
       if (!it.productId || !it.qty || !it.rate) {
-        return res.status(400).json({ message: "Invalid item data" });
+        return res
+          .status(StatusCode.BAD_REQUEST)
+          .json(ApiResponse.error(responseMessage.validationError("item data"), null, StatusCode.BAD_REQUEST));
       }
 
       const product = await Product.findById(it.productId);
       if (!product) {
-        return res.status(400).json({ message: "Product not found" });
+        return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.productNotFound, null, StatusCode.BAD_REQUEST));
       }
 
       const qty = Number(it.qty);
@@ -54,7 +66,11 @@ export const createBill = async (req: AuthRequest, res: Response) => {
 
       if (product.stock < totalQty) {
         return res.status(400).json({
-          message: `Stock not enough for ${product.name}`,
+          ...ApiResponse.error(
+            responseMessage.insufficientStock,
+            null,
+            StatusCode.BAD_REQUEST
+          ),
         });
       }
 
@@ -97,11 +113,15 @@ export const createBill = async (req: AuthRequest, res: Response) => {
     const totalBeforeDiscount = subTotal + totalTax;
 
     if (discountAmount < 0) {
-      return res.status(400).json({ message: "Discount cannot be negative" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("discount"), null, StatusCode.BAD_REQUEST));
     }
 
     if (discountAmount > totalBeforeDiscount) {
-      return res.status(400).json({ message: "Discount cannot exceed bill amount" });
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("discount"), null, StatusCode.BAD_REQUEST));
     }
 
     const grandTotal = totalBeforeDiscount - discountAmount;
@@ -119,16 +139,15 @@ export const createBill = async (req: AuthRequest, res: Response) => {
     billItems.forEach(b => (b.billId = bill._id));
     await BillItem.insertMany(billItems);
 
-    res.status(201).json({
-      message: "Bill created successfully",
-      billId: bill._id,
-    });
+    return res
+        .status(StatusCode.CREATED)
+      .json(ApiResponse.created(responseMessage.invoiceCreated, { billId: bill._id }));
   } catch (err: any) {
     console.error("CREATE BILL ERROR 👉", err.message);
 
-    res.status(500).json({
-      message: err.message || "Bill creation failed",
-    });
+    return res
+      .status(StatusCode.INTERNAL_ERROR)
+      .json(ApiResponse.error(err.message || responseMessage.internalServerError, err, StatusCode.INTERNAL_ERROR));
   }
 };
 
@@ -167,7 +186,7 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
     /* ---------------- QUERY ---------------- */
 
     const bills = await Bill.find(filter)
-      .populate("companyId", "companyName gstNumber logo address phone email state")
+      .populate("companyId", "name companyName gstNumber logo address phone email state")
       .populate("userId", "name email phone address role")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -186,9 +205,7 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
     });
 
   } catch (err) {
-    res.status(500).json({
-      message: "Failed to fetch bills",
-    });
+    res.status(500).json({ message: responseMessage.internalServerError });
   }
 };
 
@@ -203,25 +220,25 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
       _id: req.params.id,
       isDeleted: false,
     })
-      .populate("companyId", "companyName gstNumber logo address phone email state")
+      .populate("companyId", "name companyName gstNumber logo address phone email state")
       .populate("userId", "name email phone address role");
 
     if (!bill)
-      return res.status(404).json({ message: "Bill not found" });
+      return res.status(404).json({ message: responseMessage.invoiceNotFound });
 
     // 🔐 AUTH s
     if (
       req.user?.role !== "ADMIN" &&
       bill.userId._id.toString() !== req.user?._id.toString()
     ) {
-      return res.status(403).json({ message: "Access denied" });
+      return res.status(403).json({ message: responseMessage.accessDenied });
     }
 
     const items = await BillItem.find({ billId: bill._id });
 
     res.json({ bill, items });
   } catch {
-    res.status(500).json({ message: "Failed to fetch bill" });
+    res.status(500).json({ message: responseMessage.internalServerError });
   }
 };
 
@@ -233,20 +250,20 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
 export const deleteBill = async (req: AuthRequest, res: Response) => {
   try {
     const bill = await Bill.findById(req.params.id);
-    if (!bill) return res.status(404).json({ message: "Bill not found" });
+    if (!bill) return res.status(404).json({ message: responseMessage.invoiceNotFound });
 
     const isAdmin = req.user?.role === "ADMIN";
     const isOwner = bill.userId.toString() === req.user?._id?.toString();
     if (!isAdmin && !isOwner) {
-      return res.status(403).json({ message: "Not allowed" });
+      return res.status(403).json({ message: responseMessage.accessDenied });
     }
 
     bill.isDeleted = true;
     await bill.save();
 
-    res.json({ message: "Bill deleted successfully" });
+    res.json({ message: responseMessage.deleteDataSuccess("Bill") });
   } catch (err) {
-    res.status(500).json({ message: "Delete failed" });
+    res.status(500).json({ message: responseMessage.internalServerError });
   }
 };
 
@@ -258,14 +275,14 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
     });
 
     if (!bill)
-      return res.status(404).json({ message: "Bill not found" });
+      return res.status(404).json({ message: responseMessage.invoiceNotFound });
 
     // 🔐 AUTH
     const isAdmin = req.user?.role === "ADMIN";
     const isOwner = bill.userId.toString() === req.user?._id.toString();
 
     if (!isAdmin && !isOwner) {
-      return res.status(403).json({ message: "Not allowed" });
+      return res.status(403).json({ message: responseMessage.accessDenied });
     }
 
     const { companyId, items, discount } = req.body;
@@ -306,7 +323,7 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
 
         const product = await Product.findById(it.productId);
         if (!product) {
-          return res.status(400).json({ message: "Product not found" });
+          return res.status(400).json({ message: responseMessage.productNotFound });
         }
 
         const qty = Number(it.qty);
@@ -322,7 +339,7 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
 
         if (product.stock < totalQty) {
           return res.status(400).json({
-            message: `Stock not enough for ${product.name}`,
+            message: responseMessage.insufficientStock,
           });
         }
 
@@ -381,10 +398,10 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
     await bill.save();
 
     res.json({
-      message: "Bill updated successfully",
+      message: responseMessage.updateDataSuccess("Bill"),
       bill,
     });
   } catch {
-    res.status(500).json({ message: "Update failed" });
+    res.status(500).json({ message: responseMessage.internalServerError });
   }
 };

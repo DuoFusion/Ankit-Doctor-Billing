@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { CategoryModel } from "../../database/models/category";
 import { responseMessage } from "../../helper";
 import { StatusCode } from "../../common";
-import { AuthRequest } from "../../middleware/auth.middleware";
+import { AuthRequest } from "../../middleware/auth";
 
 const normalizeCategoryName = (name: string) => name.trim().toLowerCase();
 

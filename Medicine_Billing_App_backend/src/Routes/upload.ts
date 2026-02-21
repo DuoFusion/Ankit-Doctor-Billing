@@ -4,8 +4,8 @@ import {
   getImages,
   deleteImage,
 } from "../controllers/upload/index";
-import { upload } from "../middleware/upload.middleware";
-import { authMiddleware } from "../middleware/auth.middleware";
+import { upload } from "../middleware/upload";
+import { authMiddleware } from "../middleware/auth";
 
 const router = Router();
 

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { StatusCode } from "../common";
+import { ApiResponse, StatusCode } from "../common";
+import { responseMessage } from "../helper";
 
 export const validate =
   (schema: any, property: "body" | "params" | "query" = "body") =>
@@ -9,10 +10,10 @@ export const validate =
     });
 
     if (error) {
-      return res.status(StatusCode.BAD_REQUEST).json({
-        message: "Validation error",
-        errors: error.details.map((d) => d.message),
-      });
+      const errors = error.details.map((d) => d.message);
+      return res
+        .status(StatusCode.BAD_REQUEST)
+        .json(ApiResponse.error(responseMessage.validationError("request"), errors, StatusCode.BAD_REQUEST));
     }
 
     next();

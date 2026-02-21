@@ -5,11 +5,11 @@ import {
   deleteUser,
   getAllUsers,
   adminUpdateUser,
-} from "../controllers/auth/user";
+} from "../controllers/user";
 import { adminCreateUser, changePassword } from "../controllers/auth/index";
-import { authMiddleware } from "../middleware/auth.middleware";
-import { allowRoles } from "../middleware/role.middleware";
-import { validate } from "../middleware/joiMiddleware";
+import { authMiddleware } from "../middleware/auth";
+import { allowRoles } from "../middleware/role";
+import { validate } from "../middleware/joi";
 import {
   changePasswordSchema,
   createUserSchema,
