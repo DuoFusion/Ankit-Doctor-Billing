@@ -10,9 +10,6 @@ interface AuthRequest extends Request {
   user?: any;
 }
 
-/* =========================
-   CREATE BILL
-========================= */
 export const createBill = async (req: AuthRequest, res: Response) => {
   try {
     if (!req.user?._id) {
