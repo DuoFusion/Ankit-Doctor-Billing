@@ -104,7 +104,6 @@ export const createBill = async (req: AuthRequest, res: Response) => {
         total,
       });
 
-      // 🔽 stock reduce
       product.stock -= totalQty;
       await product.save();
     }
@@ -152,9 +151,6 @@ export const createBill = async (req: AuthRequest, res: Response) => {
 };
 
 
-/* =========================
-   GET ALL BILLS
-========================= */
 export const getAllBills = async (req: AuthRequest, res: Response) => {
   try {
     const { role, _id: userId } = req.user!;
@@ -165,7 +161,6 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
 
     const skip = (page - 1) * limit;
 
-    /* ---------------- FILTER ---------------- */
 
     const filter: any = {
       isDeleted: false,
@@ -183,7 +178,7 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
       ];
     }
 
-    /* ---------------- QUERY ---------------- */
+
 
     const bills = await BillModel.find(filter)
       .populate("companyId", "name companyName gstNumber logo address phone email state")
@@ -211,9 +206,6 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
 
 
 
-/* =========================
-   GET BILL BY ID (WITH ITEMS)
-========================= */
 export const getBillById = async (req: AuthRequest, res: Response) => {
   try {
     const bill = await BillModel.findOne({
@@ -226,7 +218,7 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
     if (!bill)
       return res.status(404).json({ message: responseMessage.invoiceNotFound });
 
-    // 🔐 AUTH s
+  
     if (
       req.user?.role !== "ADMIN" &&
       bill.userId._id.toString() !== req.user?._id.toString()
@@ -244,9 +236,6 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
 
 
 
-/* =========================
-   DELETE BILL (SOFT)
-========================= */
 export const deleteBill = async (req: AuthRequest, res: Response) => {
   try {
     const bill = await BillModel.findById(req.params.id);
