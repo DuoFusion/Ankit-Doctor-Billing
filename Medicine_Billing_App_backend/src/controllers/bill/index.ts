@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { Bill } from "../../database/models/bill";
-import { BillItem } from "../../database/models/billItem";
+import { BillModel } from "../../database/models/bill";
+import { BillItemModel } from "../../database/models/billItem";
 import { Product } from "../../database/models/productl";
 import { ApiResponse, StatusCode } from "../../common";
 import { responseMessage } from "../../helper";
@@ -126,7 +126,7 @@ export const createBill = async (req: AuthRequest, res: Response) => {
 
     const grandTotal = totalBeforeDiscount - discountAmount;
 
-    const bill = await Bill.create({
+    const bill = await BillModel.create({
       billNo: `BILL-${Date.now()}`,
       companyId,
       userId: req.user?._id,
@@ -137,7 +137,7 @@ export const createBill = async (req: AuthRequest, res: Response) => {
     });
 
     billItems.forEach(b => (b.billId = bill._id));
-    await BillItem.insertMany(billItems);
+    await BillItemModel.insertMany(billItems);
 
     return res
         .status(StatusCode.CREATED)
@@ -185,14 +185,14 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
 
     /* ---------------- QUERY ---------------- */
 
-    const bills = await Bill.find(filter)
+    const bills = await BillModel.find(filter)
       .populate("companyId", "name companyName gstNumber logo address phone email state")
       .populate("userId", "name email phone address role")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Bill.countDocuments(filter);
+    const total = await BillModel.countDocuments(filter);
 
     res.json({
       data: bills,
@@ -216,7 +216,7 @@ export const getAllBills = async (req: AuthRequest, res: Response) => {
 ========================= */
 export const getBillById = async (req: AuthRequest, res: Response) => {
   try {
-    const bill = await Bill.findOne({
+    const bill = await BillModel.findOne({
       _id: req.params.id,
       isDeleted: false,
     })
@@ -234,7 +234,7 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
       return res.status(403).json({ message: responseMessage.accessDenied });
     }
 
-    const items = await BillItem.find({ billId: bill._id });
+    const items = await BillItemModel.find({ billId: bill._id });
 
     res.json({ bill, items });
   } catch {
@@ -249,7 +249,7 @@ export const getBillById = async (req: AuthRequest, res: Response) => {
 ========================= */
 export const deleteBill = async (req: AuthRequest, res: Response) => {
   try {
-    const bill = await Bill.findById(req.params.id);
+    const bill = await BillModel.findById(req.params.id);
     if (!bill) return res.status(404).json({ message: responseMessage.invoiceNotFound });
 
     const isAdmin = req.user?.role === "ADMIN";
@@ -269,7 +269,7 @@ export const deleteBill = async (req: AuthRequest, res: Response) => {
 
 export const updateBill = async (req: AuthRequest, res: Response) => {
   try {
-    const bill = await Bill.findOne({
+    const bill = await BillModel.findOne({
       _id: req.params.id,
       isDeleted: false,
     });
@@ -295,7 +295,7 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
     }
 
     if (Array.isArray(items) && items.length > 0) {
-      const previousItems = await BillItem.find({ billId: bill._id });
+      const previousItems = await BillItemModel.find({ billId: bill._id });
 
       // Restore previous stock before applying new items.
       for (const oldItem of previousItems) {
@@ -374,8 +374,8 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
         await product.save();
       }
 
-      await BillItem.deleteMany({ billId: bill._id });
-      await BillItem.insertMany(nextItems);
+      await BillItemModel.deleteMany({ billId: bill._id });
+      await BillItemModel.insertMany(nextItems);
 
       bill.subTotal = subTotal;
       bill.totalTax = totalTax;

@@ -226,31 +226,58 @@ const BillView = () => {
               </div>
 
               <div>
-                <div style={{ display: "grid", gap: 8 }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>SUB TOTAL</div>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      Rs {Number(bill.subTotal || 0).toFixed(2)}
+                <div
+                  style={{
+                    background: INVOICE_ACCENT,
+                    borderRadius: 4,
+                    overflow: "hidden",
+                  }}
+                >
+                  {[
+                    { label: "SUB TOTAL", value: `Rs ${Number(bill.subTotal || 0).toFixed(2)}` },
+                    { label: "TAX", value: `Rs ${totalTax.toFixed(2)}` },
+                    { label: "TOTAL BEFORE DISCOUNT", value: `Rs ${totalBeforeDiscount.toFixed(2)}` },
+                    { label: "DISCOUNT AMOUNT", value: `- Rs ${discountAmount.toFixed(2)}` },
+                  ].map((row, index, arr) => (
+                    <div
+                      key={row.label}
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1.15fr 1fr",
+                        borderBottom: index < arr.length - 1 ? "1px solid rgba(255,255,255,0.18)" : "none",
+                      }}
+                    >
+                      <div
+                        style={{
+                          color: "#fff",
+                          padding: "10px 12px",
+                          fontSize: 12,
+                          minHeight: 42,
+                          display: "flex",
+                          alignItems: "center",
+                          letterSpacing: 0.2,
+                        }}
+                      >
+                        {row.label}
+                      </div>
+                      <div
+                        style={{
+                          color: "#fff",
+                          padding: "10px 12px",
+                          fontSize: 12,
+                          minHeight: 42,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "flex-end",
+                          whiteSpace: "nowrap",
+                          fontWeight: 600,
+                          borderLeft: "1px solid rgba(255,255,255,0.18)",
+                        }}
+                      >
+                        {row.value}
+                      </div>
                     </div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>TAX</div>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      Rs {totalTax.toFixed(2)}
-                    </div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>TOTAL BEFORE DISCOUNT</div>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      Rs {totalBeforeDiscount.toFixed(2)}
-                    </div>
-                  </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>DISCOUNT AMOUNT</div>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      - Rs {discountAmount.toFixed(2)}
-                    </div>
-                  </div>
+                  ))}
                 </div>
 
                 <div style={{ marginTop: 12, borderTop: "1px solid #9ca3af", paddingTop: 10 }}>
