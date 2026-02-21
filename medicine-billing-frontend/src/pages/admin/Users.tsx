@@ -16,6 +16,7 @@ const Users = () => {
   const navigate = useNavigate();
 
   const { data, isLoading, isFetching } = useUsers(page, limit, debouncedSearch);
+  const searchLoading = search !== debouncedSearch || isFetching;
   const { mutateAsync: updateUser, isPending } = useUpdateUser();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -73,6 +74,7 @@ const Users = () => {
         <Input.Search
           placeholder="Search by name or email"
           allowClear
+          loading={searchLoading}
           value={search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setPage(1);
@@ -84,7 +86,7 @@ const Users = () => {
 
       <Table
         rowKey="_id"
-        loading={isFetching}
+        loading={searchLoading}
         columns={columns}
         dataSource={users}
         pagination={false}

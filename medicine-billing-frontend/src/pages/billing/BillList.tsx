@@ -22,7 +22,8 @@ const BillList = () => {
   const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading } = useBills(filters.page, limit, debouncedSearch);
+  const { data, isLoading, isFetching } = useBills(filters.page, limit, debouncedSearch);
+  const searchLoading = filters.search !== debouncedSearch || isFetching;
   const { mutateAsync: deleteBill } = useDeleteBill();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();
@@ -115,6 +116,7 @@ const BillList = () => {
         <Input.Search
           placeholder="Search bill number"
           allowClear
+          loading={searchLoading}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });
@@ -125,7 +127,7 @@ const BillList = () => {
 
       <Table
         rowKey="_id"
-        loading={isLoading}
+        loading={isLoading || searchLoading}
         columns={columns}
         dataSource={rows}
         pagination={false}

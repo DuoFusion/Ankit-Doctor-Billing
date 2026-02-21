@@ -11,6 +11,7 @@ const getLogoUrl = (logo?: string) => {
   const apiBase = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
   return `${apiBase}/uploads/${logo}`;
 };
+
 const INVOICE_ACCENT = "#2f3f46";
 
 const BillView = () => {
@@ -20,24 +21,21 @@ const BillView = () => {
   const { data, isLoading } = useBill(id!);
   const printRef = useRef<HTMLDivElement>(null);
   const autoDownloadTriggered = useRef(false);
+  const bill = data?.bill;
+  const items = data?.items ?? [];
+  const companyName = bill?.companyId?.companyName || (bill?.companyId as any)?.name || "Company";
+  const companyGst = bill?.companyId?.gstNumber || (bill?.companyId as any)?.gstNo || "-";
+  const companyAddress = bill?.companyId?.address || "-";
+  const companyPhone = bill?.companyId?.phone || "-";
+  const companyEmail = bill?.companyId?.email || "-";
+  const userName = bill?.userId?.name || (bill as any)?.createdBy?.name || "-";
 
-  if (isLoading) return <p>Loading...</p>;
-  if (!data) return null;
-
-  const { bill, items } = data;
-  const companyName = bill.companyId?.companyName || (bill.companyId as any)?.name || "Company";
-  const companyGst = bill.companyId?.gstNumber || (bill.companyId as any)?.gstNo || "-";
-  const companyAddress = bill.companyId?.address || "-";
-  const companyPhone = bill.companyId?.phone || "-";
-  const companyEmail = bill.companyId?.email || "-";
-  const userName = bill.userId?.name || (bill as any)?.createdBy?.name || "-";
-
-  const userEmail = bill.userId?.email || (bill as any)?.createdBy?.email || "-";
-  const userPhone = bill.userId?.phone || (bill as any)?.createdBy?.phone || "-";
-  const userAddress = bill.userId?.address || (bill as any)?.createdBy?.address || "-";
+  const userEmail = bill?.userId?.email || (bill as any)?.createdBy?.email || "-";
+  const userPhone = bill?.userId?.phone || (bill as any)?.createdBy?.phone || "-";
+  const userAddress = bill?.userId?.address || (bill as any)?.createdBy?.address || "-";
 
   const handleDownloadPdf = async () => {
-    if (!printRef.current) return;
+    if (!printRef.current || !bill) return;
     const html2pdf = (await import("html2pdf.js")).default;
 
     await html2pdf()
@@ -63,7 +61,10 @@ const BillView = () => {
 
     autoDownloadTriggered.current = true;
     void handleDownloadPdf();
-  }, [location.search, data]);
+  }, [location.search, bill]);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (!data || !bill) return null;
 
   return (
     <div>
@@ -100,7 +101,6 @@ const BillView = () => {
             letterSpacing: 0.2,
             color: "#1f2937",
             background: "#f8f8f5",
-            border: "none",
             position: "relative",
             display: "flex",
             flexDirection: "column",
@@ -118,14 +118,7 @@ const BillView = () => {
             }}
           />
 
-          <div
-            style={{
-              padding: "24px 24px 0 34px",
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
+          <div style={{ padding: "24px 24px 0 34px", flex: 1, display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
               <div style={{ flex: 1 }}>
                 <Typography.Text style={{ display: "block", fontWeight: 700, fontSize: 24, color: "#1f2a30" }}>
@@ -208,16 +201,7 @@ const BillView = () => {
               </table>
             </div>
 
-            <div
-              style={{
-                marginTop: "auto",
-                paddingTop: 16,
-                display: "grid",
-                gridTemplateColumns: "1fr 280px",
-                gap: 22,
-                minHeight: 120,
-              }}
-            >
+            <div style={{ marginTop: "auto", paddingTop: 16, display: "grid", gridTemplateColumns: "1fr 280px", gap: 22, minHeight: 120 }}>
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
                 <Typography.Text style={{ display: "block", fontWeight: 700, marginBottom: 6 }}>
                   TERMS AND CONDITIONS

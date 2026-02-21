@@ -25,7 +25,8 @@ const CategoriesList = () => {
   const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading, error } = useCategories(filters.page, limit, debouncedSearch);
+  const { data, isLoading, isFetching, error } = useCategories(filters.page, limit, debouncedSearch);
+  const searchLoading = filters.search !== debouncedSearch || isFetching;
   const { mutateAsync: deleteCategory, isPending } = useDeleteCategory();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();
@@ -120,6 +121,7 @@ const CategoriesList = () => {
         <Input.Search
           placeholder="Search category..."
           allowClear
+          loading={searchLoading}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });
@@ -130,7 +132,7 @@ const CategoriesList = () => {
 
       <Table
         rowKey="_id"
-        loading={isLoading}
+        loading={isLoading || searchLoading}
         columns={columns}
         dataSource={categories}
         pagination={false}

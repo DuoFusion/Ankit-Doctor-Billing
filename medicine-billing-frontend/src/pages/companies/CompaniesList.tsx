@@ -25,7 +25,8 @@ const CompaniesList = () => {
   const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading } = useCompanies(filters.page, limit, debouncedSearch);
+  const { data, isLoading, isFetching } = useCompanies(filters.page, limit, debouncedSearch);
+  const searchLoading = filters.search !== debouncedSearch || isFetching;
   const { mutateAsync: deleteCompany, isPending } = useDeleteCompany();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();
@@ -112,6 +113,7 @@ const CompaniesList = () => {
         <Input.Search
           placeholder="Search company..."
           allowClear
+          loading={searchLoading}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });
@@ -122,7 +124,7 @@ const CompaniesList = () => {
 
       <Table
         rowKey="_id"
-        loading={isLoading}
+        loading={isLoading || searchLoading}
         columns={columns}
         dataSource={companies}
         pagination={false}

@@ -25,7 +25,8 @@ const ProductsList = () => {
   const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isPending } = useProducts(filters.page, limit, debouncedSearch);
+  const { data, isPending, isFetching } = useProducts(filters.page, limit, debouncedSearch);
+  const searchLoading = filters.search !== debouncedSearch || isFetching;
   const { mutateAsync: deleteProduct, isPending: deletePending } = useDeleteProduct();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();
@@ -136,6 +137,7 @@ const ProductsList = () => {
         <Input.Search
           placeholder="Search by name, category or type..."
           allowClear
+          loading={searchLoading}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });
@@ -146,7 +148,7 @@ const ProductsList = () => {
 
       <Table
         rowKey="_id"
-        loading={isPending}
+        loading={isPending || searchLoading}
         columns={columns}
         dataSource={products}
         pagination={false}
