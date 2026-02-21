@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
-import { useProfile, useUpdateProfile } from "../../hooks/useProfile";
+import { useProfile, useUpdateProfile } from "../../Hooks/useProfile";
 
 const EditProfile = () => {
   const { message } = App.useApp();

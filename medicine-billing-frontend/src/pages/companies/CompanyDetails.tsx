@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, Col, Descriptions, Row, Typography } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useCompanies } from "../../hooks/useCompanies";
+import { useCompanies } from "../../Hooks/useCompanies";
 
 const CompanyDetails = () => {
   const { id } = useParams();

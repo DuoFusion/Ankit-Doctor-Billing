@@ -11,19 +11,21 @@ import {
   App,
 } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
+import { useDeleteProduct, useProducts } from "../../Hooks/useProducts";
 import { ROLE, ROUTES } from "../../Constants";
-import type { Product } from "../../types/product";
-import { useMe } from "../../hooks/useMe";
-import { useConfirmDialog } from "../../utils/confirmDialog";
+import type { Product } from "../../Types/product";
+import { useMe } from "../../Hooks/useMe";
+import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
+import { useConfirmDialog } from "../../Utils/confirmDialog";
 
 const ProductsList = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ page: 1, search: "" });
+  const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isPending } = useProducts(filters.page, limit, filters.search);
+  const { data, isPending } = useProducts(filters.page, limit, debouncedSearch);
   const { mutateAsync: deleteProduct, isPending: deletePending } = useDeleteProduct();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();

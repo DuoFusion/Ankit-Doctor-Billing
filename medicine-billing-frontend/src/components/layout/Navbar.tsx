@@ -1,7 +1,7 @@
 import { Avatar, Space, Tag, Typography } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { useMe } from "../../hooks/useMe";
-import { useProfile } from "../../hooks/useProfile";
+import { useMe } from "../../Hooks/useMe";
+import { useProfile } from "../../Hooks/useProfile";
 
 type NavbarProps = {
   compact?: boolean;

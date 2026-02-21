@@ -1,5 +1,6 @@
 import { api } from "./axios";
-import type { Company } from "../types/company";
+import { COMPANIES_API } from "../Constants";
+import type { Company } from "../Types/company";
 
 export interface GetCompaniesParams {
   page?: number;
@@ -20,7 +21,7 @@ export interface GetCompaniesResponse {
 export const getCompaniesApi = async (
   params: GetCompaniesParams
 ): Promise<GetCompaniesResponse> => {
-  const { data } = await api.get("/companies", {
+  const { data } = await api.get(COMPANIES_API.ROOT, {
     params, // 👈 page, limit, search auto attach
     headers: {
       "Cache-Control": "no-cache",
@@ -33,7 +34,7 @@ export const getCompaniesApi = async (
 
 
 export const createCompanyApi = async (formData: FormData) => {
-  const { data } = await api.post("/companies", formData, {
+  const { data } = await api.post(COMPANIES_API.ROOT, formData, {
   });
 
   return data;
@@ -48,11 +49,11 @@ export const updateCompanyApi = async ({
   id: string;
   formData: FormData;
 }) => {
-  const { data } = await api.put(`/companies/${id}`, formData);
+  const { data } = await api.put(COMPANIES_API.BY_ID(id), formData);
   return data;
 };
 
 export const deleteCompanyApi = async (id: string) => {
-  const { data } = await api.delete(`/companies/${id}`);
+  const { data } = await api.delete(COMPANIES_API.BY_ID(id));
   return data;
 };

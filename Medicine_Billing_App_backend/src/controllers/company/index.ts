@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Company } from "../../database/models/company.model";
+import { CompanyModel } from "../../database/models/company";
 import { responseMessage } from "../../helper";
 import { StatusCode } from "../../common";
 import { AuthRequest } from "../../middleware/auth.middleware";
@@ -26,7 +26,7 @@ export const createCompany = async (
     } = req.body;
 
 
-    const newCompany = await Company.create({
+    const newCompany = await CompanyModel.create({
       userId: req.user._id,
       companyName,
       gstNumber,
@@ -80,13 +80,13 @@ export const getAllCompanies = async (
     }
 
     const [companies, total] = await Promise.all([
-      Company.find(filter)
+      CompanyModel.find(filter)
         .populate("userId", "name email role")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limitNum),
 
-      Company.countDocuments(filter),
+      CompanyModel.countDocuments(filter),
     ]);
 
     return res.status(StatusCode.OK).json({
@@ -125,7 +125,7 @@ export const getSingleCompany = async (req: any, res: Response) => {
       filter.userId = req.user._id;
     }
 
-    const company = await Company.findOne(filter);
+    const company = await CompanyModel.findOne(filter);
 
     if (!company) {
       return res.status(StatusCode.NOT_FOUND).json({
@@ -147,7 +147,7 @@ export const getSingleCompany = async (req: any, res: Response) => {
 // ================= UPDATE =================
 export const updateCompany = async (req: AuthRequest, res: Response) => {
   try {
-    const company = await Company.findById(req.params.id);
+    const company = await CompanyModel.findById(req.params.id);
 
     if (!company) {
       return res.status(404).json({ message: "Company not found" });
@@ -206,7 +206,7 @@ export const deleteCompany = async (req: any, res: Response) => {
       filter.userId = req.user._id;
     }
 
-    const company = await Company.findOneAndUpdate(
+    const company = await CompanyModel.findOneAndUpdate(
       filter,
       { isDeleted: true },
       { new: true }

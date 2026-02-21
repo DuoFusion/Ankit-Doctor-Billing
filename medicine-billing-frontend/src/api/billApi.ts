@@ -1,4 +1,5 @@
 import { api } from "./axios";
+import { BILLS_API } from "../Constants";
 
 /* =========================
    GET ALL BILLS
@@ -8,7 +9,7 @@ export const getBillsApi = async (params?: {
   limit?: number;
   search?: string;
 }) => {
-  const { data } = await api.get("/bills", { params });
+  const { data } = await api.get(BILLS_API.ROOT, { params });
   return data;
 };
 
@@ -16,7 +17,7 @@ export const getBillsApi = async (params?: {
    GET BILL BY ID
 ========================= */
 export const getBillByIdApi = async (id: string) => {
-  const { data } = await api.get(`/bills/${id}`);
+  const { data } = await api.get(BILLS_API.BY_ID(id));
   return data;
 };
 
@@ -36,7 +37,7 @@ export const createBillApi = async (payload: {
   }[];
 }) => {
   try {
-    const { data } = await api.post("/bills", {
+    const { data } = await api.post(BILLS_API.ROOT, {
       ...payload,
       discount: payload.discount || 0,
     });
@@ -56,7 +57,7 @@ export const createBillApi = async (payload: {
    DELETE BILL
 ========================= */
 export const deleteBillApi = async (id: string) => {
-  const { data } = await api.delete(`/bills/${id}`);
+  const { data } = await api.delete(BILLS_API.BY_ID(id));
   return data;
 };
 
@@ -81,6 +82,6 @@ export const updateBillApi = async ({
     }[];
   };
 }) => {
-  const { data } = await api.put(`/bills/${id}`, payload);
+  const { data } = await api.put(BILLS_API.BY_ID(id), payload);
   return data;
 };

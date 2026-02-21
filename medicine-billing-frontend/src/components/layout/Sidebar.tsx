@@ -12,7 +12,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useMe } from "../../hooks/useMe";
+import { useMe } from "../../Hooks/useMe";
 
 type SidebarProps = {
   onNavigate?: () => void;

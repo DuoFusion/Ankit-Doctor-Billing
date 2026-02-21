@@ -1,5 +1,5 @@
-import User from "../../database/models/auth.model";
-import Otp from "../../database/models/otp.model";
+import User from "../../database/models/auth";
+import Otp from "../../database/models/otp";
 import { Request, Response } from "express";
 import { email_verification_mail } from "../../helper";
 import { StatusCode } from "../../common";

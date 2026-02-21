@@ -4,7 +4,8 @@ import {
   createCompanyApi,
   updateCompanyApi,
   deleteCompanyApi,
-} from "../api/companyApi";
+} from "../Api/companyApi";
+import { QUERY_KEYS } from "../Constants";
 
 /* -------- GET -------- */
 export const useCompanies = (
@@ -13,7 +14,7 @@ export const useCompanies = (
   search: string
 ) => {
   return useQuery({
-    queryKey: ["companies", page, limit, search],
+    queryKey: QUERY_KEYS.COMPANIES_LIST({ page, limit, search }),
 
     queryFn: () =>
       getCompaniesApi({
@@ -36,7 +37,7 @@ export const useCreateCompany = () => {
   return useMutation({
     mutationFn: createCompanyApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COMPANIES });
     },
   });
 };
@@ -48,7 +49,7 @@ export const useUpdateCompany = () => {
   return useMutation({
     mutationFn: updateCompanyApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COMPANIES });
     },
   });
 };
@@ -60,7 +61,7 @@ export const useDeleteCompany = () => {
   return useMutation({
     mutationFn: deleteCompanyApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["companies"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.COMPANIES });
     },
   });
 };

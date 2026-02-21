@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-import { Bill } from "../../database/models/bill.model";
-import { BillItem } from "../../database/models/billItem.model";
-import { Product } from "../../database/models/product.model";
+import { Bill } from "../../database/models/bill";
+import { BillItem } from "../../database/models/billItem";
+import { Product } from "../../database/models/productl";
 
 interface AuthRequest extends Request {
   user?: any;

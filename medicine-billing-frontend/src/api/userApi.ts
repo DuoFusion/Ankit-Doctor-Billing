@@ -1,6 +1,6 @@
-import { AUTH_API } from "../Constants";
+import { USERS_API } from "../Constants";
 import { api } from "./axios";
-import type { User } from "../types";
+import type { User } from "../Types";
 
 export interface GetUsersResponse {
   users: User[];
@@ -21,7 +21,7 @@ export const getAllUsersApi = async ({
   limit: number;
   search?: string;
 }): Promise<GetUsersResponse> => {
-  const res = await api.get(AUTH_API.USERS, {
+  const res = await api.get(USERS_API.ROOT, {
     params: {
       page,
       limit,
@@ -45,12 +45,12 @@ export const updateUserApi = async ({
     role: string;
   };
 }) => {
-  const res = await api.put(`/users/${id}`, data);
+  const res = await api.put(USERS_API.BY_ID(id), data);
   return res.data;
 };
 
 export const getProfileApi = async () => {
-  const res = await api.get("/users/me");
+  const res = await api.get(USERS_API.ME);
   return res.data.user as User;
 };
 
@@ -61,13 +61,13 @@ export const updateProfileApi = async (data: {
   phone?: string;
   address?: string;
 }) => {
-  const res = await api.put("/users/me", data);
+  const res = await api.put(USERS_API.ME, data);
   return res.data.user as User;
 };
 
 // DELETE ACCOUNT
 export const deleteAccountApi = async () => {
-  const res = await api.delete("/users/me");
+  const res = await api.delete(USERS_API.ME);
   return res.data;
 };
 
@@ -79,7 +79,7 @@ export const createUserApi = async (data: {
   phone?: string;
   role?: string;
 }) => {
-  const res = await api.post(AUTH_API.USERS, data);
+  const res = await api.post(USERS_API.ROOT, data);
   return res.data;
 };
 
@@ -88,6 +88,6 @@ export const changePasswordApi = async (data: {
   oldPassword: string;
   newPassword: string;
 }) => {
-  const res = await api.put("/users/me/password", data);
+  const res = await api.put(USERS_API.ME_PASSWORD, data);
   return res.data;
 };

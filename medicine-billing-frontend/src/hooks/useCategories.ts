@@ -6,11 +6,12 @@ import {
   getCategoryDropdownApi,
   getCategoriesApi,
   updateCategoryApi,
-} from "../api/categoryApi";
+} from "../Api/categoryApi";
+import { QUERY_KEYS } from "../Constants";
 
 export const useCategories = (page: number, limit: number, search: string) => {
   return useQuery({
-    queryKey: ["categories", page, limit, search],
+    queryKey: QUERY_KEYS.CATEGORIES_LIST({ page, limit, search }),
     queryFn: () =>
       getCategoriesApi({
         page,
@@ -24,7 +25,7 @@ export const useCategories = (page: number, limit: number, search: string) => {
 
 export const useCategory = (id: string) => {
   return useQuery({
-    queryKey: ["category", id],
+    queryKey: QUERY_KEYS.CATEGORY(id),
     queryFn: () => getCategoryByIdApi(id),
     enabled: !!id,
   });
@@ -32,7 +33,7 @@ export const useCategory = (id: string) => {
 
 export const useCategoryDropdown = () => {
   return useQuery({
-    queryKey: ["categories", "dropdown"],
+    queryKey: QUERY_KEYS.CATEGORIES_DROPDOWN,
     queryFn: getCategoryDropdownApi,
     staleTime: 1000 * 30,
   });
@@ -44,7 +45,7 @@ export const useCreateCategory = () => {
   return useMutation({
     mutationFn: createCategoryApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CATEGORIES });
     },
   });
 };
@@ -55,8 +56,8 @@ export const useUpdateCategory = () => {
   return useMutation({
     mutationFn: updateCategoryApi,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      queryClient.invalidateQueries({ queryKey: ["category", variables.id] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CATEGORIES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CATEGORY(variables.id) });
     },
   });
 };
@@ -67,7 +68,7 @@ export const useDeleteCategory = () => {
   return useMutation({
     mutationFn: deleteCategoryApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.CATEGORIES });
     },
   });
 };

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient,   } from "@tanstack/react-query";
-import { getAllUsersApi, updateUserApi, createUserApi } from "../api/userApi";
+import { getAllUsersApi, updateUserApi, createUserApi } from "../Api/userApi";
 import { useMe } from "./useMe";
+import { QUERY_KEYS } from "../Constants";
 
 export const useUsers = (
   page: number,
@@ -10,7 +11,7 @@ export const useUsers = (
   const { data: me } = useMe();
 
   return useQuery({
-    queryKey: ["users", page, limit, search],
+    queryKey: QUERY_KEYS.USERS_LIST({ page, limit, search }),
     queryFn: () =>
       getAllUsersApi({
         page,
@@ -28,7 +29,7 @@ export const useUpdateUser = () => {
   return useMutation({
     mutationFn: updateUserApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS });
     },
   });
 };
@@ -39,7 +40,7 @@ export const useCreateUser = () => {
   return useMutation({
     mutationFn: createUserApi,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS });
     },
   });
 };

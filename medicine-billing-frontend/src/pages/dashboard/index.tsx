@@ -1,13 +1,17 @@
-import { Card, Col, Grid, Row, Statistic, Table, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Button, Card, Col, Grid, Row, Space, Statistic, Table, Typography } from "antd";
+import { EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { ROLE } from "../../Constants";
-import { useMe } from "../../hooks/useMe";
-import { useBills } from "../../hooks/useBills";
-import { useCategories } from "../../hooks/useCategories";
-import { useCompanies } from "../../hooks/useCompanies";
-import { useProducts } from "../../hooks/useProducts";
-import { useUsers } from "../../hooks/useUsers";
+import { ROUTES } from "../../Constants";
+import { useMe } from "../../Hooks/useMe";
+import { useBills } from "../../Hooks/useBills";
+import { useCategories } from "../../Hooks/useCategories";
+import { useCompanies } from "../../Hooks/useCompanies";
+import { useProducts } from "../../Hooks/useProducts";
+import { useUsers } from "../../Hooks/useUsers";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const screens = Grid.useBreakpoint();
   const isMobile = !screens.md;
   const { data: user, isLoading } = useMe();
@@ -56,6 +60,27 @@ const Dashboard = () => {
       key: "total",
       align: "right" as const,
       render: (_: any, record: any) => `Rs ${Number(record.grandTotal || 0).toFixed(2)}`,
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_: any, record: any) => (
+        <Space>
+          <Button
+            icon={<EyeOutlined />}
+            onClick={() => navigate(ROUTES.BILL_DETAILS(record._id))}
+          >
+            View
+          </Button>
+          <Button
+            type="primary"
+            icon={<FilePdfOutlined />}
+            onClick={() => navigate(`${ROUTES.BILL_DETAILS(record._id)}?download=1`)}
+          >
+            Download
+          </Button>
+        </Space>
+      ),
     },
   ];
 

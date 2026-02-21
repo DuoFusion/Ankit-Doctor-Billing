@@ -69,4 +69,4 @@ const companySchema = new Schema<ICompany>(
 // Optional: index for faster search
 companySchema.index({ gstNumber: 1 });
 
-export const Company = model<ICompany>("Company", companySchema);
+export const CompanyModel = model<ICompany>("Company", companySchema);

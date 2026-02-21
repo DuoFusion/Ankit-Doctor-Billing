@@ -12,18 +12,20 @@ import {
 } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
 import { ROLE, ROUTES } from "../../Constants";
-import { useCompanies, useDeleteCompany } from "../../hooks/useCompanies";
-import { useMe } from "../../hooks/useMe";
-import type { Company } from "../../types/company";
-import { useConfirmDialog } from "../../utils/confirmDialog";
+import { useCompanies, useDeleteCompany } from "../../Hooks/useCompanies";
+import { useMe } from "../../Hooks/useMe";
+import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
+import type { Company } from "../../Types/company";
+import { useConfirmDialog } from "../../Utils/confirmDialog";
 
 const CompaniesList = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ page: 1, search: "" });
+  const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading } = useCompanies(filters.page, limit, filters.search);
+  const { data, isLoading } = useCompanies(filters.page, limit, debouncedSearch);
   const { mutateAsync: deleteCompany, isPending } = useDeleteCompany();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { resetPasswordApi } from "../../api/auth.api";
+import { resetPasswordApi } from "../../Api/auth.api";
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();

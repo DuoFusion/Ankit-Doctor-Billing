@@ -2,9 +2,9 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, Button, Card, Descriptions, Space, Tag, Typography } from "antd";
 import { EditOutlined, LockOutlined, LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useProfile, useDeleteAccount } from "../../hooks/useProfile";
-import { useAuth } from "../../hooks/useAuth";
-import { useConfirmDialog } from "../../utils/confirmDialog";
+import { useProfile, useDeleteAccount } from "../../Hooks/useProfile";
+import { useAuth } from "../../Hooks/useAuth";
+import { useConfirmDialog } from "../../Utils/confirmDialog";
 
 const Profile = () => {
   const navigate = useNavigate();

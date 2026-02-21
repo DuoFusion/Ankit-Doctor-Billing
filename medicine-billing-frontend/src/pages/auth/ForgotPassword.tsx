@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { forgotPasswordApi } from "../../api/auth.api";
+import { forgotPasswordApi } from "../../Api/auth.api";
 import { ROUTES } from "../../Constants";
 
 const ForgotPassword: React.FC = () => {

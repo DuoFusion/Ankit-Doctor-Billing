@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, Upload, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useCompanies, useUpdateCompany } from "../../hooks/useCompanies";
+import { useCompanies, useUpdateCompany } from "../../Hooks/useCompanies";
 
 const EditCompany = () => {
   const { message } = App.useApp();

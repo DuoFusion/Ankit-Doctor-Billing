@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { loginApi, verifyOtpApi, logoutApi } from "../api/auth.api";
+import { loginApi, verifyOtpApi, logoutApi } from "../Api/auth.api";
 import { QUERY_KEYS, ROUTES } from "../Constants";
 
 export const useAuth = () => {

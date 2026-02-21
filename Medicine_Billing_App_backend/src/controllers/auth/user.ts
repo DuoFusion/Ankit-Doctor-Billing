@@ -1,4 +1,4 @@
-import User from "../../database/models/auth.model";
+import User from "../../database/models/auth";
 import { Request, Response } from "express";
 import { StatusCode } from "../../common";
 import {AuthRequest} from "../../middleware/auth.middleware"

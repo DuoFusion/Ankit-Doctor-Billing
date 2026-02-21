@@ -11,7 +11,8 @@ import {
   createBillApi,
   deleteBillApi,
   updateBillApi,
-} from "../api/billApi";
+} from "../Api/billApi";
+import { QUERY_KEYS } from "../Constants";
 
 /* ======================
    LIST BILLS
@@ -22,7 +23,7 @@ export const useBills = (
   search: string
 ) =>
   useQuery({
-    queryKey: ["bills", page, limit, search],
+    queryKey: QUERY_KEYS.BILLS_LIST({ page, limit, search }),
     queryFn: () =>
       getBillsApi({
         page,
@@ -38,7 +39,7 @@ export const useBills = (
 ====================== */
 export const useBill = (id?: string) =>
   useQuery({
-    queryKey: ["bill", id],
+    queryKey: QUERY_KEYS.BILL(id!),
     queryFn: () => getBillByIdApi(id!),
     enabled: !!id,
   });
@@ -55,7 +56,7 @@ export const useCreateBill = () => {
     onSuccess: () => {
       // ✅ refresh bill list
       qc.invalidateQueries({
-        queryKey: ["bills"],
+        queryKey: QUERY_KEYS.BILLS,
       });
     },
 
@@ -76,7 +77,7 @@ export const useDeleteBill = () => {
 
     onSuccess: () => {
       qc.invalidateQueries({
-        queryKey: ["bills"],
+        queryKey: QUERY_KEYS.BILLS,
       });
     },
   });
@@ -91,8 +92,8 @@ export const useUpdateBill = () => {
   return useMutation({
     mutationFn: updateBillApi,
     onSuccess: (_, variables) => {
-      qc.invalidateQueries({ queryKey: ["bills"] });
-      qc.invalidateQueries({ queryKey: ["bill", variables.id] });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.BILLS });
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.BILL(variables.id) });
     },
   });
 };

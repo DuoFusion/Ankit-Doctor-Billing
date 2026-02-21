@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import express from 'express'
-import { ensureCategoryCollectionIndexes } from '../models/category.model';
+import { ensureCategoryCollectionIndexes } from '../models/category';
 const dbUrl: any = process.env.DB_URL;
 const mongooseConnection = express()
 mongoose.set('strictQuery', false)

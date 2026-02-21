@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { App } from "antd";
 import BillForm from "../../components/billing/BillForm";
 import { ROUTES } from "../../Constants";
-import { useBill, useUpdateBill } from "../../hooks/useBills";
-import { useCompanies } from "../../hooks/useCompanies";
+import { useBill, useUpdateBill } from "../../Hooks/useBills";
+import { useCompanies } from "../../Hooks/useCompanies";
 
 const EditBill = () => {
   const { message } = App.useApp();

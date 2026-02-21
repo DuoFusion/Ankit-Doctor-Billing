@@ -1,6 +1,6 @@
 import { Input, Modal, Select, Space, Typography } from "antd";
 import { useState } from "react";
-import type { User } from "../types";
+import type { User } from "../Types";
 
 interface Props {
   user: User;

@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, InputNumber, Select, Typography, App } from "antd";
-import { useCompanies } from "../../hooks/useCompanies";
-import { useCreateProduct } from "../../hooks/useProducts";
+import { useCompanies } from "../../Hooks/useCompanies";
+import { useCreateProduct } from "../../Hooks/useProducts";
 import { ROUTES } from "../../Constants";
-import { useCategoryDropdown } from "../../hooks/useCategories";
+import { useCategoryDropdown } from "../../Hooks/useCategories";
 
 const CreateProduct = () => {
   const { message } = App.useApp();

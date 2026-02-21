@@ -10,17 +10,19 @@ import {
   Typography,
 } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
-import { useBills, useDeleteBill } from "../../hooks/useBills";
+import { useBills, useDeleteBill } from "../../Hooks/useBills";
 import { ROLE, ROUTES } from "../../Constants";
-import { useMe } from "../../hooks/useMe";
-import { useConfirmDialog } from "../../utils/confirmDialog";
+import { useMe } from "../../Hooks/useMe";
+import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
+import { useConfirmDialog } from "../../Utils/confirmDialog";
 
 const BillList = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ page: 1, search: "" });
+  const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading } = useBills(filters.page, limit, filters.search);
+  const { data, isLoading } = useBills(filters.page, limit, debouncedSearch);
   const { mutateAsync: deleteBill } = useDeleteBill();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();

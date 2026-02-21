@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Alert, Button, Card, Form, Input, Typography, App } from "antd";
 import { MailOutlined, SafetyOutlined } from "@ant-design/icons";
-import { useAuth } from "../../hooks/useAuth";
-import type { VerifyOtpPayload } from "../../types";
+import { useAuth } from "../../Hooks/useAuth";
+import type { VerifyOtpPayload } from "../../Types";
 import { ROUTES } from "../../Constants";
 
 const VerifyOtp: React.FC = () => {

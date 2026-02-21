@@ -6,7 +6,8 @@ import {
   updateProductApi,
   deleteProductApi,
   getProductByIdApi,
-} from "../api/productApi";
+} from "../Api/productApi";
+import { QUERY_KEYS } from "../Constants";
 
 /* -------- GET (LIST) -------- */
 export const useProducts = (
@@ -21,15 +22,14 @@ export const useProducts = (
   }
 ) => {
   return useQuery({
-    queryKey: [
-      "products",
+    queryKey: QUERY_KEYS.PRODUCTS_LIST({
       page,
       limit,
       search,
-      filters?.category,
-      filters?.productType,
-      filters?.companyId,
-    ],
+      category: filters?.category,
+      productType: filters?.productType,
+      companyId: filters?.companyId,
+    }),
     queryFn: () =>
       getProductsApi({
         page,
@@ -48,7 +48,7 @@ export const useProducts = (
 
 export const useProduct = (id: string) => {
   return useQuery({
-    queryKey: ["product", id],
+    queryKey: QUERY_KEYS.PRODUCT(id),
     queryFn: () => getProductByIdApi(id),
     enabled: !!id,
   });
@@ -62,7 +62,7 @@ export const useCreateProduct = () => {
     mutationFn: createProductApi,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: QUERY_KEYS.PRODUCTS,
       });
     },
   });
@@ -75,9 +75,9 @@ export const useUpdateProduct = () => {
   return useMutation({
     mutationFn: updateProductApi,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["products"] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS });
       queryClient.invalidateQueries({
-        queryKey: ["product", variables.id],
+        queryKey: QUERY_KEYS.PRODUCT(variables.id),
       });
     },
   });
@@ -92,7 +92,7 @@ export const useDeleteProduct = () => {
     mutationFn: deleteProductApi,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["products"],
+        queryKey: QUERY_KEYS.PRODUCTS,
       });
     },
   });

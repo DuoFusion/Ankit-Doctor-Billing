@@ -11,7 +11,7 @@ import {
   App,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { useProducts } from "../../hooks/useProducts";
+import { useProducts } from "../../Hooks/useProducts";
 
 type BillFormItem = {
   productId: string;

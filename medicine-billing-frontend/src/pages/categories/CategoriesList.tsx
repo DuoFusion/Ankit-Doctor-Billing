@@ -12,18 +12,20 @@ import {
 } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useCategories, useDeleteCategory } from "../../hooks/useCategories";
-import { useMe } from "../../hooks/useMe";
-import type { Category } from "../../types/category";
-import { useConfirmDialog } from "../../utils/confirmDialog";
+import { useCategories, useDeleteCategory } from "../../Hooks/useCategories";
+import { useMe } from "../../Hooks/useMe";
+import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
+import type { Category } from "../../Types/category";
+import { useConfirmDialog } from "../../Utils/confirmDialog";
 
 const CategoriesList = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const [filters, setFilters] = useState({ page: 1, search: "" });
+  const debouncedSearch = useDebouncedValue(filters.search, 500);
   const limit = 10;
 
-  const { data, isLoading, error } = useCategories(filters.page, limit, filters.search);
+  const { data, isLoading, error } = useCategories(filters.page, limit, debouncedSearch);
   const { mutateAsync: deleteCategory, isPending } = useDeleteCategory();
   const { data: me } = useMe();
   const confirmDialog = useConfirmDialog();

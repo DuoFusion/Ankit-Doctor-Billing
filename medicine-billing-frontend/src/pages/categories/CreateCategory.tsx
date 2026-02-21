@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import axios from "axios";
 import { ROUTES } from "../../Constants";
-import { useCreateCategory } from "../../hooks/useCategories";
+import { useCreateCategory } from "../../Hooks/useCategories";
 
 const CreateCategory = () => {
   const { message } = App.useApp();

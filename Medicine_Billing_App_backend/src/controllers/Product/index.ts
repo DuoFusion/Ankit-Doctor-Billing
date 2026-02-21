@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Product } from "../../database/models/product.model";
+import { Product } from "../../database/models/productl";
 import { responseMessage } from "../../helper";
 import { StatusCode } from "../../common";
 import { AuthRequest } from "../../middleware/auth.middleware";

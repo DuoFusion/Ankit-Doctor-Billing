@@ -2,18 +2,20 @@ import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Input, Pagination, Table, Tag, Typography } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-import { useUsers, useUpdateUser } from "../../hooks/useUsers";
+import { useUsers, useUpdateUser } from "../../Hooks/useUsers";
 import EditUserModal from "../../components/EditUserModal";
 import { ROUTES } from "../../Constants";
-import type { User } from "../../types";
+import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
+import type { User } from "../../Types";
 
 const Users = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebouncedValue(search, 500);
   const limit = 10;
   const navigate = useNavigate();
 
-  const { data, isLoading, isFetching } = useUsers(page, limit, search);
+  const { data, isLoading, isFetching } = useUsers(page, limit, debouncedSearch);
   const { mutateAsync: updateUser, isPending } = useUpdateUser();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 

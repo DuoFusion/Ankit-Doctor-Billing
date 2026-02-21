@@ -1,11 +1,11 @@
 // ===================== auth.api.ts =====================
-import { api } from "../api/axios";
+import { api } from "../Api/axios";
 import type {
   LoginPayload,
   VerifyOtpPayload,
   LoginResponse,
   VerifyOtpResponse,
-} from "../types";
+} from "../Types";
 import { AUTH_API } from "../Constants";
 
 export const loginApi = async (data: LoginPayload) => {

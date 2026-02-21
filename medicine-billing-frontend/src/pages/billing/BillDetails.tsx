@@ -1,9 +1,9 @@
-import { useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Space, Typography } from "antd";
 import { EditOutlined, FilePdfOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
-import { useBill } from "../../hooks/useBills";
+import { useBill } from "../../Hooks/useBills";
 
 const getLogoUrl = (logo?: string) => {
   if (!logo) return "";
@@ -15,9 +15,11 @@ const INVOICE_ACCENT = "#2f3f46";
 
 const BillView = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { id } = useParams();
   const { data, isLoading } = useBill(id!);
   const printRef = useRef<HTMLDivElement>(null);
+  const autoDownloadTriggered = useRef(false);
 
   if (isLoading) return <p>Loading...</p>;
   if (!data) return null;
@@ -40,16 +42,28 @@ const BillView = () => {
 
     await html2pdf()
       .set({
-        margin: [10, 10, 10, 10],
+        margin: 0,
         filename: `${bill.billNo || "invoice"}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: "mm", orientation: "portrait" },
-        pagebreak: { mode: ["css", "legacy"] },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css"] },
       } as any)
       .from(printRef.current)
       .save();
   };
+
+  useEffect(() => {
+    const shouldAutoDownload =
+      new URLSearchParams(location.search).get("download") === "1";
+
+    if (!shouldAutoDownload || !data || autoDownloadTriggered.current) {
+      return;
+    }
+
+    autoDownloadTriggered.current = true;
+    void handleDownloadPdf();
+  }, [location.search, data]);
 
   return (
     <div>
@@ -77,6 +91,8 @@ const BillView = () => {
         <div
           ref={printRef}
           style={{
+            width: "209mm",
+            height: "296mm",
             margin: "0 auto",
             boxSizing: "border-box",
             fontFamily: "Inter, Poppins, Roboto, 'Segoe UI', sans-serif",
@@ -84,8 +100,11 @@ const BillView = () => {
             letterSpacing: 0.2,
             color: "#1f2937",
             background: "#f8f8f5",
-            border: "1px solid #d8d8d2",
+            border: "none",
             position: "relative",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
           }}
         >
           <div
@@ -99,7 +118,14 @@ const BillView = () => {
             }}
           />
 
-          <div style={{ padding: "28px 28px 0 38px" }}>
+          <div
+            style={{
+              padding: "24px 24px 0 34px",
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             <div style={{ display: "flex", justifyContent: "space-between", gap: 20 }}>
               <div style={{ flex: 1 }}>
                 <Typography.Text style={{ display: "block", fontWeight: 700, fontSize: 24, color: "#1f2a30" }}>
@@ -184,11 +210,12 @@ const BillView = () => {
 
             <div
               style={{
-                marginTop: 26,
+                marginTop: "auto",
+                paddingTop: 16,
                 display: "grid",
                 gridTemplateColumns: "1fr 280px",
                 gap: 22,
-                minHeight: 190,
+                minHeight: 120,
               }}
             >
               <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
@@ -239,7 +266,7 @@ const BillView = () => {
             </div>
           </div>
 
-          <div style={{ marginTop: 24, background: INVOICE_ACCENT, color: "#fff", padding: "14px 28px 14px 38px" }}>
+          <div style={{ marginTop: 8, background: INVOICE_ACCENT, color: "#fff", padding: "12px 24px 12px 34px" }}>
             <Typography.Text style={{ display: "block", color: "#fff", fontWeight: 600 }}>
               Thank you for your business.
             </Typography.Text>
