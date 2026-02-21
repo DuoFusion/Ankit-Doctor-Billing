@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient,   } from "@tanstack/react-query";
-import { getAllUsersApi, updateUserApi, createUserApi } from "../Api/userApi";
+import { getAllUsersApi, updateUserApi, createUserApi } from "../api/userApi";
 import { useMe } from "./useMe";
-import { QUERY_KEYS } from "../Constants";
+import { QUERY_KEYS } from "../constants";
 
 export const useUsers = (
   page: number,

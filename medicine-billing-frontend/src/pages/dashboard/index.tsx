@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Col, Grid, Row, Space, Statistic, Table, Typography } from "antd";
 import { EyeOutlined, FilePdfOutlined } from "@ant-design/icons";
-import { ROLE } from "../../Constants";
-import { ROUTES } from "../../Constants";
-import { useMe } from "../../Hooks/useMe";
-import { useBills } from "../../Hooks/useBills";
-import { useCategories } from "../../Hooks/useCategories";
-import { useCompanies } from "../../Hooks/useCompanies";
-import { useProducts } from "../../Hooks/useProducts";
-import { useUsers } from "../../Hooks/useUsers";
+import { ROLE } from "../../constants";
+import { ROUTES } from "../../constants";
+import { useMe } from "../../hooks/useMe";
+import { useBills } from "../../hooks/useBills";
+import { useCategories } from "../../hooks/useCategories";
+import { useCompanies } from "../../hooks/useCompanies";
+import { useProducts } from "../../hooks/useProducts";
+import { useUsers } from "../../hooks/useUsers";
 
 const Dashboard = () => {
   const navigate = useNavigate();

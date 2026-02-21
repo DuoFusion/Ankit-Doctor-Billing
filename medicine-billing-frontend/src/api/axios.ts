@@ -1,6 +1,6 @@
 // src/api/axios.ts
 import axios from "axios";
-import { AUTH_API } from "../Constants";
+import { AUTH_API } from "../constants";
 
 export const api = axios.create({
   baseURL: "http://localhost:5000/api",

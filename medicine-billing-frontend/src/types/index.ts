@@ -1,2 +1,2 @@
-export * from "./auth.type"
+export * from "./auth"
 export * from "./category"

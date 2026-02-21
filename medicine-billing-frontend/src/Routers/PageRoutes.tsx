@@ -1,43 +1,43 @@
 import Dashboard from "../pages/dashboard";
 
 // Products
-import ProductsList from "../pages/Product/ProductsList";
-import CreateProduct from "../pages/Product/CreateProduct";
-import EditProduct from "../pages/Product/EditProduct";
+import ProductsList from "../pages/Product/productsList";
+import CreateProduct from "../pages/Product/createProduct";
+import EditProduct from "../pages/Product/editProduct";
 
 // Companies
-import CompaniesList from "../pages/companies/CompaniesList";
-import CreateCompany from "../pages/companies/CreateCompany";
-import CompanyDetails from "../pages/companies/CompanyDetails";
-import EditCompany from "../pages/companies/EditCompany";
-import CategoriesList from "../pages/categories/CategoriesList";
-import CreateCategory from "../pages/categories/CreateCategory";
-import EditCategory from "../pages/categories/EditCategory";
+import CompaniesList from "../pages/companies/companiesList";
+import CreateCompany from "../pages/companies/createCompany";
+import CompanyDetails from "../pages/companies/companyDetails";
+import EditCompany from "../pages/companies/editCompany";
+import CategoriesList from "../pages/categories/categoriesList";
+import CreateCategory from "../pages/categories/createCategory";
+import EditCategory from "../pages/categories/editCategory";
 
 // Profile
-import Profile from "../pages/Profile/Profile";
-import EditProfile from "../pages/Profile/EditProfile";
-import ChangePassword from "../pages/Profile/ChangePassword";
+import Profile from "../pages/Profile/profile";
+import EditProfile from "../pages/Profile/editProfile";
+import ChangePassword from "../pages/Profile/changePassword";
 
 // Admin
-import Users from "../pages/admin/Users";
-import CreateUser from "../pages/admin/CreateUser";
+import Users from "../pages/admin/users";
+import CreateUser from "../pages/admin/createUser";
 
 // Auth
-import Login from "../pages/auth/Login";
-import ForgotPassword from "../pages/auth/ForgotPassword";
-import ResetPassword from "../pages/auth/ResetPassword";
-import VerifyOtp from "../pages/auth/VerifyOtp";
+import Login from "../pages/auth/login";
+import ForgotPassword from "../pages/auth/forgotPassword";
+import ResetPassword from "../pages/auth/resetPassword";
+import VerifyOtp from "../pages/auth/verifyOtp";
 
-import { ROUTES } from "../Constants";
-import ProtectedRoute from "../components/protected/ProtectedRoute";
-import PublicOnlyRoute from "../components/protected/PublicOnlyRoute";
-import Layout from "../components/layout/Layout";
-import BillDetails from "../pages/billing/BillDetails";
-import CreateBill from "../pages/billing/CreateBill";
-import BillList from "../pages/billing/BillList";
-import EditBill from "../pages/billing/EditBill";
-import NotFound from "../pages/NotFound";
+import { ROUTES } from "../constants";
+import ProtectedRoute from "../components/protected/protectedRoute";
+import PublicOnlyRoute from "../components/protected/publicOnlyRoute";
+import Layout from "../components/layout/layout";
+import BillDetails from "../pages/billing/billDetails";
+import CreateBill from "../pages/billing/createBill";
+import BillList from "../pages/billing/billList";
+import EditBill from "../pages/billing/editBill";
+import NotFound from "../pages/notFound";
 export const PageRoutes = [
   /* ============ PUBLIC ============ */
   {

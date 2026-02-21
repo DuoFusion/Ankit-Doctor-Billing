@@ -11,12 +11,12 @@ import {
   App,
 } from "antd";
 import { DeleteOutlined, EditOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { useDeleteProduct, useProducts } from "../../Hooks/useProducts";
-import { ROLE, ROUTES } from "../../Constants";
-import type { Product } from "../../Types/product";
-import { useMe } from "../../Hooks/useMe";
-import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
-import { useConfirmDialog } from "../../Utils/confirmDialog";
+import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
+import { ROLE, ROUTES } from "../../constants";
+import type { Product } from "../../types/product";
+import { useMe } from "../../hooks/useMe";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const ProductsList = () => {
   const { message } = App.useApp();

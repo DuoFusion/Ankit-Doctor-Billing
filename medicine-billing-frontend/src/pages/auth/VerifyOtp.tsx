@@ -1,10 +1,10 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Alert, Button, Card, Form, Input, Typography, App } from "antd";
 import { MailOutlined, SafetyOutlined } from "@ant-design/icons";
-import { useAuth } from "../../Hooks/useAuth";
-import type { VerifyOtpPayload } from "../../Types";
-import { ROUTES } from "../../Constants";
-import { otpRule, requiredRule } from "../../Utils/formRules";
+import { useAuth } from "../../hooks/useAuth";
+import type { VerifyOtpPayload } from "../../types";
+import { ROUTES } from "../../constants";
+import { otpRule, requiredRule } from "../../utils/formRules";
 
 const VerifyOtp: React.FC = () => {
   const { message } = App.useApp();

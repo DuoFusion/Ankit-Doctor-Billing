@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useMe } from "../../Hooks/useMe";
-import NotFound from "../../pages/NotFound";
-import { ROUTES } from "../../Constants";
+import { useMe } from "../../hooks/useMe";
+import NotFound from "../../pages/notFound";
+import { ROUTES } from "../../constants";
 
 const PublicOnlyRoute: React.FC = () => {
   const location = useLocation();

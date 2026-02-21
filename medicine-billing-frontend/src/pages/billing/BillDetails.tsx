@@ -2,8 +2,8 @@ import { useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Space, Typography } from "antd";
 import { EditOutlined, FilePdfOutlined } from "@ant-design/icons";
-import { ROUTES } from "../../Constants";
-import { useBill } from "../../Hooks/useBills";
+import { ROUTES } from "../../constants";
+import { useBill } from "../../hooks/useBills";
 
 const getLogoUrl = (logo?: string) => {
   if (!logo) return "";

@@ -2,8 +2,8 @@ import { Outlet } from "react-router-dom";
 import { useState } from "react";
 import { Button, Drawer, Grid, Layout as AntLayout } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
-import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
+import Navbar from "./navbar";
+import Sidebar from "./sidebar";
 
 const { Header, Sider, Content } = AntLayout;
 

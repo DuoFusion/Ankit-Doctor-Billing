@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { api } from "../Api/axios";
-import { AUTH_API, QUERY_KEYS } from "../Constants";
+import { api } from "../api/axios";
+import { AUTH_API, QUERY_KEYS } from "../constants";
 
 export const useMe = () => {
   return useQuery({
@@ -9,11 +9,10 @@ export const useMe = () => {
       try {
         const res = await api.get(AUTH_API.ME);
         return res.data;
-      } catch (err: any) {
+      } catch {
         return null; 
       }
     },
     retry: false
   });
 };
-

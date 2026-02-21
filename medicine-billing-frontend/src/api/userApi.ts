@@ -1,6 +1,6 @@
-import { USERS_API } from "../Constants";
+import { USERS_API } from "../constants";
 import { api } from "./axios";
-import type { User } from "../Types";
+import type { User } from "../types";
 
 export interface GetUsersResponse {
   users: User[];

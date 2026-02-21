@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { App, Button, Card, Form, Input, Typography } from "antd";
-import { resetPasswordApi } from "../../Api/auth.api";
-import { ROUTES } from "../../Constants";
-import { otpRule, passwordMinRule, requiredRule } from "../../Utils/formRules";
+import { resetPasswordApi } from "../../api/auth.api";
+import { ROUTES } from "../../constants";
+import { otpRule, passwordMinRule, requiredRule } from "../../utils/formRules";
 
 type ResetPasswordValues = {
   otp: string;

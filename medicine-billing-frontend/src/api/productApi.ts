@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { PRODUCTS_API } from "../Constants";
+import { PRODUCTS_API } from "../constants";
 
 export const getProductsApi = async (params?: {
   page?: number;

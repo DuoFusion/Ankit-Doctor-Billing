@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { App } from "antd";
-import BillForm from "../../components/billing/BillForm";
-import { ROUTES } from "../../Constants";
-import { useBill, useUpdateBill } from "../../Hooks/useBills";
-import { useCompanies } from "../../Hooks/useCompanies";
+import BillForm from "../../components/billing/billForm";
+import { ROUTES } from "../../constants";
+import { useBill, useUpdateBill } from "../../hooks/useBills";
+import { useCompanies } from "../../hooks/useCompanies";
 
 const EditBill = () => {
   const { message } = App.useApp();

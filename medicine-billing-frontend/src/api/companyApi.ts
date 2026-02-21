@@ -1,6 +1,6 @@
 import { api } from "./axios";
-import { COMPANIES_API } from "../Constants";
-import type { Company } from "../Types/company";
+import { COMPANIES_API } from "../constants";
+import type { Company } from "../types/company";
 
 export interface GetCompaniesParams {
   page?: number;

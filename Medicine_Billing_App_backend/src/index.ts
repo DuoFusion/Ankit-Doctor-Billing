@@ -4,7 +4,7 @@ import http from 'http';
 import cors from 'cors'
 import { mongooseConnection} from './database'
 import dotenv from "dotenv"
-import apiRoutes from "./Routes";
+import apiRoutes from "./routes";
 import cookieParser from "cookie-parser"
 
 

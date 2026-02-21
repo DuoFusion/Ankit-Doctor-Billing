@@ -1,9 +1,9 @@
 import { App, Button, Dropdown, Space, Tag, Typography, type MenuProps } from "antd";
 import { LogoutOutlined, MedicineBoxOutlined, UserOutlined } from "@ant-design/icons";
-import { useMe } from "../../Hooks/useMe";
-import { useProfile } from "../../Hooks/useProfile";
-import { useAuth } from "../../Hooks/useAuth";
-import { useConfirmDialog } from "../../Utils/confirmDialog";
+import { useMe } from "../../hooks/useMe";
+import { useProfile } from "../../hooks/useProfile";
+import { useAuth } from "../../hooks/useAuth";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 type NavbarProps = {
   compact?: boolean;

@@ -6,8 +6,8 @@ import {
   updateProductApi,
   deleteProductApi,
   getProductByIdApi,
-} from "../Api/productApi";
-import { QUERY_KEYS } from "../Constants";
+} from "../api/productApi";
+import { QUERY_KEYS } from "../constants";
 
 /* -------- GET (LIST) -------- */
 export const useProducts = (

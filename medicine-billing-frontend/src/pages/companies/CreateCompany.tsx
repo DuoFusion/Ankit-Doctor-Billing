@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, Upload, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { ROUTES } from "../../Constants";
-import { useCreateCompany } from "../../Hooks/useCompanies";
-import { emailRule, gstRule, phoneRule, requiredRule } from "../../Utils/formRules";
+import { ROUTES } from "../../constants";
+import { useCreateCompany } from "../../hooks/useCompanies";
+import { emailRule, gstRule, phoneRule, requiredRule } from "../../utils/formRules";
 
 const CreateCompany = () => {
   const { message } = App.useApp();

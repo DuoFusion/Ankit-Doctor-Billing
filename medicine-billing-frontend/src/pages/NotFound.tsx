@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ROUTES } from "../Constants";
+import { ROUTES } from "../constants";
 
 const NotFound: React.FC = () => {
   return (

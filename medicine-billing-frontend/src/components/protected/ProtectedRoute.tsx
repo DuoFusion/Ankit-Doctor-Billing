@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useMe } from "../../Hooks/useMe";
-import { ROUTES } from "../../Constants";
+import { useMe } from "../../hooks/useMe";
+import { ROUTES } from "../../constants";
 
 type ProtectedRouteProps = {
   roles?: string[];

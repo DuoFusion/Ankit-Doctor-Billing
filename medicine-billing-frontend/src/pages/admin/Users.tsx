@@ -2,11 +2,11 @@ import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Input, Pagination, Table, Tag, Typography } from "antd";
 import { LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { useUsers, useUpdateUser } from "../../Hooks/useUsers";
-import EditUserModal from "../../components/EditUserModal";
-import { ROUTES } from "../../Constants";
-import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
-import type { User } from "../../Types";
+import { useUsers, useUpdateUser } from "../../hooks/useUsers";
+import EditUserModal from "../../components/editUserModal";
+import { ROUTES } from "../../constants";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import type { User } from "../../types";
 
 const Users = () => {
   const [page, setPage] = useState(1);

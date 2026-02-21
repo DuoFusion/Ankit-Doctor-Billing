@@ -6,8 +6,8 @@ import {
   getCategoryDropdownApi,
   getCategoriesApi,
   updateCategoryApi,
-} from "../Api/categoryApi";
-import { QUERY_KEYS } from "../Constants";
+} from "../api/categoryApi";
+import { QUERY_KEYS } from "../constants";
 
 export const useCategories = (page: number, limit: number, search: string) => {
   return useQuery({

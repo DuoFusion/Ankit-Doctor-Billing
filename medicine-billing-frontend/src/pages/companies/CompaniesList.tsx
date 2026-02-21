@@ -11,12 +11,12 @@ import {
   App,
 } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { ROLE, ROUTES } from "../../Constants";
-import { useCompanies, useDeleteCompany } from "../../Hooks/useCompanies";
-import { useMe } from "../../Hooks/useMe";
-import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
-import type { Company } from "../../Types/company";
-import { useConfirmDialog } from "../../Utils/confirmDialog";
+import { ROLE, ROUTES } from "../../constants";
+import { useCompanies, useDeleteCompany } from "../../hooks/useCompanies";
+import { useMe } from "../../hooks/useMe";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import type { Company } from "../../types/company";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const CompaniesList = () => {
   const { message } = App.useApp();

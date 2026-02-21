@@ -4,8 +4,8 @@ import {
   createCompanyApi,
   updateCompanyApi,
   deleteCompanyApi,
-} from "../Api/companyApi";
-import { QUERY_KEYS } from "../Constants";
+} from "../api/companyApi";
+import { QUERY_KEYS } from "../constants";
 
 /* -------- GET -------- */
 export const useCompanies = (

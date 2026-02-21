@@ -1,10 +1,10 @@
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
-import { useAuth } from "../../Hooks/useAuth";
-import type { LoginPayload } from "../../Types";
-import { ROUTES } from "../../Constants";
-import { emailRule, passwordMinRule, requiredRule } from "../../Utils/formRules";
+import { useAuth } from "../../hooks/useAuth";
+import type { LoginPayload } from "../../types";
+import { ROUTES } from "../../constants";
+import { emailRule, passwordMinRule, requiredRule } from "../../utils/formRules";
 
 const Login: React.FC = () => {
   const { message } = App.useApp();

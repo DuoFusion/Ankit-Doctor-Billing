@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Form, Input, InputNumber, Select, Typography, App } from "antd";
-import { useCompanies } from "../../Hooks/useCompanies";
-import { useUpdateProduct, useProduct } from "../../Hooks/useProducts";
-import { ROUTES } from "../../Constants";
-import { useCategoryDropdown } from "../../Hooks/useCategories";
-import { requiredRule } from "../../Utils/formRules";
+import { useCompanies } from "../../hooks/useCompanies";
+import { useUpdateProduct, useProduct } from "../../hooks/useProducts";
+import { ROUTES } from "../../constants";
+import { useCategoryDropdown } from "../../hooks/useCategories";
+import { requiredRule } from "../../utils/formRules";
 
 const UpdateProduct = () => {
   const { message } = App.useApp();

@@ -12,8 +12,8 @@ import {
   IdcardOutlined,
   PlusSquareFilled,
 } from "@ant-design/icons";
-import { ROUTES } from "../../Constants";
-import { useMe } from "../../Hooks/useMe";
+import { ROUTES } from "../../constants";
+import { useMe } from "../../hooks/useMe";
 
 type SidebarProps = {
   onNavigate?: () => void;
@@ -24,9 +24,7 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  if (isLoading || !data) return null;
-
-  const role = data.role;
+  const role = data?.role ?? "USER";
 
   const menuItems: MenuProps["items"] = useMemo(
     () =>
@@ -81,6 +79,8 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
     (menuItems || [])
       .map((item: any) => item.key)
       .find((key: string) => location.pathname.startsWith(key)) || ROUTES.DASHBOARD;
+
+  if (isLoading || !data) return null;
 
   return (
     <div className="medbill-sidebar" style={{ height: "100%", display: "flex", flexDirection: "column" }}>

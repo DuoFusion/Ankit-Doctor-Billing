@@ -1,5 +1,5 @@
 import { api } from "./axios";
-import { BILLS_API } from "../Constants";
+import { BILLS_API } from "../constants";
 
 /* =========================
    GET ALL BILLS

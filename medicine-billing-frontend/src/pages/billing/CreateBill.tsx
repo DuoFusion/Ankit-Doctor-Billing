@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { App } from "antd";
-import BillForm from "../../components/billing/BillForm";
-import { ROUTES } from "../../Constants";
-import { useCompanies } from "../../Hooks/useCompanies";
-import { useCreateBill } from "../../Hooks/useBills";
+import BillForm from "../../components/billing/billForm";
+import { ROUTES } from "../../constants";
+import { useCompanies } from "../../hooks/useCompanies";
+import { useCreateBill } from "../../hooks/useBills";
 
 const CreateBill = () => {
   const { message } = App.useApp();

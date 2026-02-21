@@ -1,6 +1,6 @@
 import { useQuery,useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProfileApi, updateProfileApi, deleteAccountApi, changePasswordApi } from "../Api/userApi";
-import { QUERY_KEYS } from "../Constants";
+import { getProfileApi, updateProfileApi, deleteAccountApi, changePasswordApi } from "../api/userApi";
+import { QUERY_KEYS } from "../constants";
 
 
 

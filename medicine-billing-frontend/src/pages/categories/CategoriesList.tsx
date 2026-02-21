@@ -11,12 +11,12 @@ import {
   App,
 } from "antd";
 import { DeleteOutlined, EditOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { ROUTES } from "../../Constants";
-import { useCategories, useDeleteCategory } from "../../Hooks/useCategories";
-import { useMe } from "../../Hooks/useMe";
-import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
-import type { Category } from "../../Types/category";
-import { useConfirmDialog } from "../../Utils/confirmDialog";
+import { ROUTES } from "../../constants";
+import { useCategories, useDeleteCategory } from "../../hooks/useCategories";
+import { useMe } from "../../hooks/useMe";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import type { Category } from "../../types/category";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const CategoriesList = () => {
   const { message } = App.useApp();

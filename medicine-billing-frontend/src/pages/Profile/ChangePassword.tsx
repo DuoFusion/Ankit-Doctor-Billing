@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
-import { ROUTES } from "../../Constants";
-import { useChangePassword } from "../../Hooks/useProfile";
-import { passwordMinRule, requiredRule } from "../../Utils/formRules";
+import { ROUTES } from "../../constants";
+import { useChangePassword } from "../../hooks/useProfile";
+import { passwordMinRule, requiredRule } from "../../utils/formRules";
 
 const ChangePassword = () => {
   const { message } = App.useApp();

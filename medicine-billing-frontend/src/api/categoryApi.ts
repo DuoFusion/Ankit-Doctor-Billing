@@ -1,10 +1,10 @@
 import { api } from "./axios";
-import { CATEGORIES_API } from "../Constants";
+import { CATEGORIES_API } from "../constants";
 import type {
   Category,
   CategoryDropdownItem,
   CreateCategoryPayload,
-} from "../Types/category";
+} from "../types/category";
 
 export interface GetCategoriesParams {
   page?: number;

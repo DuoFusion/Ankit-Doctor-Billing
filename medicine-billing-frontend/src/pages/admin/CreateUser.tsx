@@ -1,8 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Select, Typography, App } from "antd";
-import { ROUTES } from "../../Constants";
-import { useCreateUser } from "../../Hooks/useUsers";
-import { emailRule, passwordMinRule, phoneRule, requiredRule } from "../../Utils/formRules";
+import { ROUTES } from "../../constants";
+import { useCreateUser } from "../../hooks/useUsers";
+import { emailRule, passwordMinRule, phoneRule, requiredRule } from "../../utils/formRules";
 
 const CreateUser: React.FC = () => {
   const { message } = App.useApp();

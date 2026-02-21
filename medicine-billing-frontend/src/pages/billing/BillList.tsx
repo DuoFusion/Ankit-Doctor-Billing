@@ -10,11 +10,11 @@ import {
   Typography,
 } from "antd";
 import { DeleteOutlined, EditOutlined, EyeOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
-import { useBills, useDeleteBill } from "../../Hooks/useBills";
-import { ROLE, ROUTES } from "../../Constants";
-import { useMe } from "../../Hooks/useMe";
-import { useDebouncedValue } from "../../Hooks/useDebouncedValue";
-import { useConfirmDialog } from "../../Utils/confirmDialog";
+import { useBills, useDeleteBill } from "../../hooks/useBills";
+import { ROLE, ROUTES } from "../../constants";
+import { useMe } from "../../hooks/useMe";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { useConfirmDialog } from "../../utils/confirmDialog";
 
 const BillList = () => {
   const navigate = useNavigate();

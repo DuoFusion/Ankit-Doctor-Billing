@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
-import { ROUTES } from "../../Constants";
-import { useProfile, useUpdateProfile } from "../../Hooks/useProfile";
-import { emailRule, phoneRule, requiredRule } from "../../Utils/formRules";
+import { ROUTES } from "../../constants";
+import { useProfile, useUpdateProfile } from "../../hooks/useProfile";
+import { emailRule, phoneRule, requiredRule } from "../../utils/formRules";
 
 const EditProfile = () => {
   const { message } = App.useApp();
