@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { CompanyModel } from "../../database/models/company";
 import { responseMessage } from "../../helper";
-import { ApiResponse, StatusCode } from "../../common";
+import { ApiResponse, ROLE, StatusCode } from "../../common";
 import { AuthRequest } from "../../middleware/auth";
 
 // ================= CREATE =================
@@ -60,7 +60,7 @@ export const getAllCompanies = async (
     const filter: any = { isDeleted: false };
 
     // 🔐 Role based access
-    if (req.user?.role !== "ADMIN") {
+    if (req.user?.role !== ROLE.ADMIN) {
       filter.userId = req.user?._id;
     }
 
@@ -118,7 +118,7 @@ export const getSingleCompany = async (req: any, res: Response) => {
     }
 
     const { id } = req.params;
-    const isAdmin = req.user.role === "ADMIN";
+    const isAdmin = req.user.role === ROLE.ADMIN;
 
     const filter: any = { _id: id, isDeleted: false };
 
@@ -155,7 +155,7 @@ export const updateCompany = async (req: AuthRequest, res: Response) => {
     }
 
     if (
-      req.user?.role !== "admin" &&
+      req.user?.role !== ROLE.ADMIN &&
       company.userId.toString() !== req.user?._id
     ) {
       return res.status(403).json({ message: responseMessage.accessDenied });
@@ -204,7 +204,7 @@ export const deleteCompany = async (req: any, res: Response) => {
     }
 
     const { id } = req.params;
-    const isAdmin = req.user.role === "ADMIN";
+    const isAdmin = req.user.role === ROLE.ADMIN;
 
     const filter: any = { _id: id, isDeleted: false };
 
