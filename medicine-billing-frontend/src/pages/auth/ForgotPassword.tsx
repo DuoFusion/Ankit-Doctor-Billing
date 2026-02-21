@@ -1,45 +1,56 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { App, Button, Card, Form, Input, Typography } from "antd";
 import { forgotPasswordApi } from "../../Api/auth.api";
 import { ROUTES } from "../../Constants";
+import { emailRule, requiredRule } from "../../Utils/formRules";
+
+type ForgotPasswordValues = {
+  email: string;
+};
 
 const ForgotPassword: React.FC = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<ForgotPasswordValues>();
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (values: ForgotPasswordValues) => {
     try {
-      setLoading(true);
-      await forgotPasswordApi({ email });
-      alert("OTP sent to your email");
-      navigate(ROUTES.RESET_PASSWORD, { state: { email } });
+      await forgotPasswordApi({ email: values.email });
+      message.success("OTP sent to your email");
+      navigate(ROUTES.RESET_PASSWORD, { state: { email: values.email } });
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Failed");
-    } finally {
-      setLoading(false);
+      message.error(err?.response?.data?.message || "Failed to send OTP");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={submit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-5">
-        <h2 className="text-2xl font-semibold text-center">Forgot Password</h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        background: "linear-gradient(145deg, #0f2a43 0%, #1e6f5c 50%, #eef2f6 100%)",
+        padding: 16,
+      }}
+    >
+      <Card style={{ width: "100%", maxWidth: 420, borderRadius: 16 }}>
+        <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 4 }}>
+          Forgot Password
+        </Typography.Title>
+        <Typography.Paragraph style={{ textAlign: "center", color: "#64748b", marginBottom: 20 }}>
+          Enter your email to receive OTP
+        </Typography.Paragraph>
 
-        <input
-          type="email"
-          placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg"
-        />
+        <Form form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
+          <Form.Item name="email" label="Email" rules={[requiredRule("Email"), emailRule]}>
+            <Input placeholder="Enter your email" />
+          </Form.Item>
 
-        <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white p-3 rounded-lg">
-          {loading ? "Sending..." : "Send OTP"}
-        </button>
-      </form>
+          <Button type="primary" htmlType="submit" block size="large">
+            Send OTP
+          </Button>
+        </Form>
+      </Card>
     </div>
   );
 };

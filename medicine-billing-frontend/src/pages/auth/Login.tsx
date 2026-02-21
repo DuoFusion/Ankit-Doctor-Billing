@@ -1,26 +1,21 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import { LockOutlined, MailOutlined } from "@ant-design/icons";
 import { useAuth } from "../../Hooks/useAuth";
 import type { LoginPayload } from "../../Types";
 import { ROUTES } from "../../Constants";
+import { emailRule, passwordMinRule, requiredRule } from "../../Utils/formRules";
 
 const Login: React.FC = () => {
   const { message } = App.useApp();
   const navigate = useNavigate();
   const { login, loading } = useAuth();
 
-  const [formData, setFormData] = useState<LoginPayload>({
-    email: "",
-    password: "",
-  });
-
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: LoginPayload) => {
     try {
-      await login(formData);
+      await login(values);
       message.success("OTP sent to your email");
-      navigate(ROUTES.VERIFY_OTP, { state: { email: formData.email, otpSent: true } });
+      navigate(ROUTES.VERIFY_OTP, { state: { email: values.email, otpSent: true } });
     } catch (error: any) {
       message.error(`Login failed: ${error.message}`);
     }
@@ -53,25 +48,23 @@ const Login: React.FC = () => {
 
         <Form layout="vertical" onFinish={handleSubmit} requiredMark={false}>
           <Form.Item
+            name="email"
             label="Email"
-            rules={[{ required: true, message: "Email is required" }]}
+            rules={[requiredRule("Email"), emailRule]}
           >
             <Input
               prefix={<MailOutlined />}
-              value={formData.email}
-              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
               placeholder="Enter your email"
             />
           </Form.Item>
 
           <Form.Item
+            name="password"
             label="Password"
-            rules={[{ required: true, message: "Password is required" }]}
+            rules={[requiredRule("Password"), passwordMinRule]}
           >
             <Input.Password
               prefix={<LockOutlined />}
-              value={formData.password}
-              onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
               placeholder="Enter your password"
             />
           </Form.Item>

@@ -10,7 +10,7 @@ import {
   Typography,
   App,
 } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useDeleteProduct, useProducts } from "../../Hooks/useProducts";
 import { ROLE, ROUTES } from "../../Constants";
 import type { Product } from "../../Types/product";
@@ -134,10 +134,11 @@ const ProductsList = () => {
       }
     >
       <div style={{ marginBottom: 16 }}>
-        <Input.Search
+        <Input
           placeholder="Search by name, category or type..."
           allowClear
-          loading={searchLoading}
+          prefix={<SearchOutlined />}
+          suffix={searchLoading ? <LoadingOutlined spin /> : null}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });

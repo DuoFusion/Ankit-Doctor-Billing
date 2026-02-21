@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Select, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useCreateUser } from "../../Hooks/useUsers";
+import { emailRule, passwordMinRule, phoneRule, requiredRule } from "../../Utils/formRules";
 
 const CreateUser: React.FC = () => {
   const { message } = App.useApp();
@@ -23,19 +24,19 @@ const CreateUser: React.FC = () => {
     <Card style={{ maxWidth: 720, margin: "0 auto" }}>
       <Typography.Title level={4}>Create User</Typography.Title>
       <Form form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
-        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+        <Form.Item name="name" label="Name" rules={[requiredRule("Name"), { min: 2, message: "Name must be at least 2 characters" }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+        <Form.Item name="email" label="Email" rules={[requiredRule("Email"), emailRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="password" label="Password" rules={[{ required: true }]}>
+        <Form.Item name="password" label="Password" rules={[requiredRule("Password"), passwordMinRule]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item name="phone" label="Phone">
+        <Form.Item name="phone" label="Phone" rules={[phoneRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="role" label="Role" initialValue="USER">
+        <Form.Item name="role" label="Role" initialValue="USER" rules={[requiredRule("Role")]}>
           <Select options={[{ value: "USER", label: "USER" }, { value: "ADMIN", label: "ADMIN" }]} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 0 }}>

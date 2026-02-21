@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Input, Pagination, Table, Tag, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
+import { LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { useUsers, useUpdateUser } from "../../Hooks/useUsers";
 import EditUserModal from "../../components/EditUserModal";
 import { ROUTES } from "../../Constants";
@@ -71,10 +71,11 @@ const Users = () => {
       }
     >
       <div style={{ marginBottom: 16 }}>
-        <Input.Search
+        <Input
           placeholder="Search by name or email"
           allowClear
-          loading={searchLoading}
+          prefix={<SearchOutlined />}
+          suffix={searchLoading ? <LoadingOutlined spin /> : null}
           value={search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setPage(1);

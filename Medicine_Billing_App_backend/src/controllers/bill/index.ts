@@ -93,7 +93,18 @@ export const createBill = async (req: AuthRequest, res: Response) => {
       await product.save();
     }
 
-    const grandTotal = subTotal + totalTax - Number(discount);
+    const discountAmount = Number(discount || 0);
+    const totalBeforeDiscount = subTotal + totalTax;
+
+    if (discountAmount < 0) {
+      return res.status(400).json({ message: "Discount cannot be negative" });
+    }
+
+    if (discountAmount > totalBeforeDiscount) {
+      return res.status(400).json({ message: "Discount cannot exceed bill amount" });
+    }
+
+    const grandTotal = totalBeforeDiscount - discountAmount;
 
     const bill = await Bill.create({
       billNo: `BILL-${Date.now()}`,
@@ -101,7 +112,7 @@ export const createBill = async (req: AuthRequest, res: Response) => {
       userId: req.user?._id,
       subTotal,
       totalTax,
-      discount,
+      discount: discountAmount,
       grandTotal,
     });
 
@@ -353,8 +364,19 @@ export const updateBill = async (req: AuthRequest, res: Response) => {
       bill.totalTax = totalTax;
     }
 
-    bill.discount = Number(discount ?? bill.discount ?? 0);
-    bill.grandTotal = Number(bill.subTotal || 0) + Number(bill.totalTax || 0) - bill.discount;
+    const discountAmount = Number(discount ?? bill.discount ?? 0);
+    const totalBeforeDiscount = Number(bill.subTotal || 0) + Number(bill.totalTax || 0);
+
+    if (discountAmount < 0) {
+      return res.status(400).json({ message: "Discount cannot be negative" });
+    }
+
+    if (discountAmount > totalBeforeDiscount) {
+      return res.status(400).json({ message: "Discount cannot exceed bill amount" });
+    }
+
+    bill.discount = discountAmount;
+    bill.grandTotal = totalBeforeDiscount - discountAmount;
 
     await bill.save();
 

@@ -1,10 +1,10 @@
-import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Alert, Button, Card, Form, Input, Typography, App } from "antd";
 import { MailOutlined, SafetyOutlined } from "@ant-design/icons";
 import { useAuth } from "../../Hooks/useAuth";
 import type { VerifyOtpPayload } from "../../Types";
 import { ROUTES } from "../../Constants";
+import { otpRule, requiredRule } from "../../Utils/formRules";
 
 const VerifyOtp: React.FC = () => {
   const { message } = App.useApp();
@@ -15,14 +15,11 @@ const VerifyOtp: React.FC = () => {
   const emailFromState = location.state?.email || "";
   const otpSent = Boolean(location.state?.otpSent);
 
-  const [formData, setFormData] = useState<VerifyOtpPayload>({
-    email: emailFromState,
-    otp: "",
-  });
+  const [form] = Form.useForm<VerifyOtpPayload>();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (values: VerifyOtpPayload) => {
     try {
-      await verifyOtp(formData);
+      await verifyOtp(values);
       message.success("OTP verified successfully");
       navigate(ROUTES.DASHBOARD);
     } catch (error: any) {
@@ -60,22 +57,26 @@ const VerifyOtp: React.FC = () => {
             type="success"
             showIcon
             icon={<MailOutlined />}
-            message={`OTP sent to ${formData.email}`}
+            message={`OTP sent to ${emailFromState}`}
             style={{ marginBottom: 16, borderRadius: 10 }}
           />
         )}
 
-        <Form layout="vertical" onFinish={handleSubmit} requiredMark={false}>
-          <Form.Item label="Email">
-            <Input value={formData.email} readOnly />
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          requiredMark={false}
+          initialValues={{ email: emailFromState, otp: "" }}
+        >
+          <Form.Item name="email" label="Email" rules={[requiredRule("Email")]}>
+            <Input readOnly />
           </Form.Item>
 
-          <Form.Item label="OTP" rules={[{ required: true, message: "OTP is required" }]}>
+          <Form.Item name="otp" label="OTP" rules={[requiredRule("OTP"), otpRule]}>
             <Input
               prefix={<SafetyOutlined />}
               placeholder="Enter 6-digit OTP"
-              value={formData.otp}
-              onChange={(e) => setFormData((prev) => ({ ...prev, otp: e.target.value }))}
               maxLength={6}
             />
           </Form.Item>

@@ -8,16 +8,23 @@ import {
 ,
 } from "../controllers/Product/index";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { validate } from "../middleware/joiMiddleware";
+import {
+  createProductSchema,
+  productIdParamSchema,
+  productQuerySchema,
+  updateProductSchema,
+} from "../validation";
 
 const router = Router();
 
 router.use(authMiddleware)
 
-router.post("/", createProduct);
-router.get("/", getProducts);
-router.put("/:id", updateProduct);
-router.get("/:id", getProductById);
+router.post("/", validate(createProductSchema), createProduct);
+router.get("/", validate(productQuerySchema, "query"), getProducts);
+router.put("/:id", validate(productIdParamSchema, "params"), validate(updateProductSchema), updateProduct);
+router.get("/:id", validate(productIdParamSchema, "params"), getProductById);
 
-router.delete("/:id", deleteProduct);
+router.delete("/:id", validate(productIdParamSchema, "params"), deleteProduct);
 
 export default router;

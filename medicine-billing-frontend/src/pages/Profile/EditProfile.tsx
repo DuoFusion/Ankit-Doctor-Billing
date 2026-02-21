@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useProfile, useUpdateProfile } from "../../Hooks/useProfile";
+import { emailRule, phoneRule, requiredRule } from "../../Utils/formRules";
 
 const EditProfile = () => {
   const { message } = App.useApp();
@@ -37,16 +38,16 @@ const EditProfile = () => {
     <Card style={{ maxWidth: 760, margin: "0 auto" }}>
       <Typography.Title level={4}>Update Profile</Typography.Title>
       <Form form={form} layout="vertical" onFinish={handleSave} requiredMark={false}>
-        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+        <Form.Item name="name" label="Name" rules={[requiredRule("Name"), { min: 2, message: "Name must be at least 2 characters" }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="email" label="Email" rules={[{ required: true }]}>
+        <Form.Item name="email" label="Email" rules={[requiredRule("Email"), emailRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="phone" label="Phone">
+        <Form.Item name="phone" label="Phone" rules={[phoneRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="address" label="Address">
+        <Form.Item name="address" label="Address" rules={[{ max: 500, message: "Address must be 500 characters or less" }]}>
           <Input.TextArea rows={3} />
         </Form.Item>
         <Form.Item style={{ marginBottom: 0 }}>

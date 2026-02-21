@@ -10,7 +10,7 @@ import {
   Typography,
   App,
 } from "antd";
-import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useCategories, useDeleteCategory } from "../../Hooks/useCategories";
 import { useMe } from "../../Hooks/useMe";
@@ -118,10 +118,11 @@ const CategoriesList = () => {
       }
     >
       <div style={{ marginBottom: 16 }}>
-        <Input.Search
+        <Input
           placeholder="Search category..."
           allowClear
-          loading={searchLoading}
+          prefix={<SearchOutlined />}
+          suffix={searchLoading ? <LoadingOutlined spin /> : null}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });

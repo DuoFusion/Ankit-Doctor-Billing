@@ -122,22 +122,65 @@ const BillForm = ({
 
   const subTotal = rowTotals.reduce((sum, row) => sum + row.taxable, 0);
   const totalTax = rowTotals.reduce((sum, row) => sum + row.tax, 0);
-  const grandTotal = subTotal + totalTax - discount;
+  const totalBeforeDiscount = subTotal + totalTax;
+  const discountAmount = Math.max(0, Number(discount || 0));
+  const grandTotal = Math.max(0, totalBeforeDiscount - discountAmount);
 
   const submit = async () => {
     if (!companyId) {
-      message.error("Please select company");
+      message.error("Company is required");
       return;
     }
-    if (!items.length || items.some((it) => !it.productId || !it.qty || !it.rate)) {
-      message.error("Please complete all bill items");
+
+    if (discount < 0) {
+      message.error("Bill discount cannot be negative");
+      return;
+    }
+
+    if (Number(discount || 0) > totalBeforeDiscount) {
+      message.error("Discount amount cannot be greater than total bill amount.");
+      return;
+    }
+
+    if (!items.length) {
+      message.error("At least one bill item is required");
+      return;
+    }
+
+    const invalidItemIndex = items.findIndex((it) => {
+      const qty = Number(it.qty || 0);
+      const rate = Number(it.rate || 0);
+      const tax = Number(it.taxPercent || 0);
+      const lineDiscount = Number(it.discount || 0);
+
+      return (
+        !it.productId ||
+        qty <= 0 ||
+        rate <= 0 ||
+        tax < 0 ||
+        tax > 100 ||
+        lineDiscount < 0 ||
+        lineDiscount > 100
+      );
+    });
+
+    if (invalidItemIndex >= 0) {
+      message.error(`Please fix item #${invalidItemIndex + 1} (product/qty/rate/gst/discount).`);
       return;
     }
 
     await onSubmit({
       companyId,
-      discount,
-      items,
+      discount: discountAmount,
+      items: items.map((it) => ({
+        ...it,
+        qty: Number(it.qty || 0),
+        freeQty: Number(it.freeQty || 0),
+        rate: Number(it.rate || 0),
+        mrp: Number(it.mrp || 0),
+        taxPercent: Number(it.taxPercent || 0),
+        discount: Number(it.discount || 0),
+      })),
     });
   };
 
@@ -259,13 +302,16 @@ const BillForm = ({
         <Space direction="vertical" style={{ width: "100%" }}>
           <Typography.Text>Sub Total: Rs {subTotal.toFixed(2)}</Typography.Text>
           <Typography.Text>Tax: Rs {totalTax.toFixed(2)}</Typography.Text>
+          <Typography.Text>Total Before Discount: Rs {totalBeforeDiscount.toFixed(2)}</Typography.Text>
           <InputNumber
             style={{ width: "100%" }}
             value={discount}
             min={0}
+            max={Number(totalBeforeDiscount.toFixed(2))}
             onChange={(value: number | null) => setDiscount(value || 0)}
             addonBefore="Bill Discount"
           />
+          <Typography.Text>Discount Amount: - Rs {discountAmount.toFixed(2)}</Typography.Text>
           <Typography.Title level={5} style={{ margin: 0 }}>
             Grand Total: Rs {grandTotal.toFixed(2)}
           </Typography.Title>

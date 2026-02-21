@@ -1,56 +1,93 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { App, Button, Card, Form, Input, Typography } from "antd";
 import { resetPasswordApi } from "../../Api/auth.api";
+import { ROUTES } from "../../Constants";
+import { otpRule, passwordMinRule, requiredRule } from "../../Utils/formRules";
+
+type ResetPasswordValues = {
+  otp: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 const ResetPassword: React.FC = () => {
+  const { message } = App.useApp();
   const navigate = useNavigate();
   const location = useLocation();
   const email = (location.state as any)?.email || "";
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm<ResetPasswordValues>();
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (values: ResetPasswordValues) => {
+    if (!email) {
+      message.error("Email is missing. Please start from Forgot Password.");
+      navigate(ROUTES.FORGOT_PASSWORD);
+      return;
+    }
+
     try {
-      setLoading(true);
-      await resetPasswordApi({ email, otp, newPassword });
-      alert("Password reset successful");
-      navigate("/");
+      await resetPasswordApi({ email, otp: values.otp, newPassword: values.newPassword });
+      message.success("Password reset successful");
+      navigate(ROUTES.LOGIN);
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Failed");
-    } finally {
-      setLoading(false);
+      message.error(err?.response?.data?.message || "Failed to reset password");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form onSubmit={submit} className="bg-white p-8 rounded-xl shadow-md w-full max-w-md space-y-5">
-        <h2 className="text-2xl font-semibold text-center">Reset Password</h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "grid",
+        placeItems: "center",
+        background: "linear-gradient(145deg, #0f2a43 0%, #1e6f5c 50%, #eef2f6 100%)",
+        padding: 16,
+      }}
+    >
+      <Card style={{ width: "100%", maxWidth: 420, borderRadius: 16 }}>
+        <Typography.Title level={3} style={{ textAlign: "center", marginBottom: 4 }}>
+          Reset Password
+        </Typography.Title>
+        <Typography.Paragraph style={{ textAlign: "center", color: "#64748b", marginBottom: 20 }}>
+          Set a new password for {email || "your account"}
+        </Typography.Paragraph>
 
-        <input
-          type="text"
-          placeholder="OTP"
-          value={otp}
-          onChange={(e) => setOtp(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg"
-        />
+        <Form form={form} layout="vertical" onFinish={submit} requiredMark={false}>
+          <Form.Item name="otp" label="OTP" rules={[requiredRule("OTP"), otpRule]}>
+            <Input maxLength={6} placeholder="Enter 6-digit OTP" />
+          </Form.Item>
 
-        <input
-          type="password"
-          placeholder="New password"
-          value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
-          required
-          className="w-full p-3 border rounded-lg"
-        />
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[requiredRule("New password"), passwordMinRule]}
+          >
+            <Input.Password placeholder="Enter new password" />
+          </Form.Item>
 
-        <button type="submit" disabled={loading} className="w-full bg-green-600 text-white p-3 rounded-lg">
-          {loading ? "Saving..." : "Reset Password"}
-        </button>
-      </form>
+          <Form.Item
+            name="confirmPassword"
+            label="Confirm Password"
+            dependencies={["newPassword"]}
+            rules={[
+              requiredRule("Confirm password"),
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("Passwords do not match"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="Re-enter new password" />
+          </Form.Item>
+
+          <Button type="primary" htmlType="submit" block size="large">
+            Reset Password
+          </Button>
+        </Form>
+      </Card>
     </div>
   );
 };

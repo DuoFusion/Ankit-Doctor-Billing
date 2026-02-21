@@ -3,13 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Menu, Typography } from "antd";
 import type { MenuProps } from "antd";
 import {
+  DashboardOutlined,
+  BankOutlined,
   AppstoreOutlined,
-  ApartmentOutlined,
-  TagsOutlined,
-  ShoppingOutlined,
+  MedicineBoxOutlined,
   TeamOutlined,
-  FileDoneOutlined,
-  UserOutlined,
+  FileTextOutlined,
+  IdcardOutlined,
+  PlusSquareFilled,
 } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useMe } from "../../Hooks/useMe";
@@ -32,31 +33,31 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
       [
         {
           key: ROUTES.DASHBOARD,
-          icon: <AppstoreOutlined />,
+          icon: <DashboardOutlined />,
           label: "Dashboard",
           roles: ["ADMIN", "USER"],
         },
         {
           key: ROUTES.PRODUCTS,
-          icon: <ShoppingOutlined />,
+          icon: <MedicineBoxOutlined />,
           label: "Medicines",
           roles: ["ADMIN", "USER"],
         },
         {
           key: ROUTES.COMPANIES,
-          icon: <ApartmentOutlined />,
+          icon: <BankOutlined />,
           label: "Companies",
           roles: ["ADMIN", "USER"],
         },
         {
           key: ROUTES.CATEGORIES,
-          icon: <TagsOutlined />,
+          icon: <AppstoreOutlined />,
           label: "Categories",
           roles: ["ADMIN", "USER"],
         },
         {
           key: ROUTES.BILLING,
-          icon: <FileDoneOutlined />,
+          icon: <FileTextOutlined />,
           label: "Billing",
           roles: ["ADMIN", "USER"],
         },
@@ -68,7 +69,7 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
         },
         {
           key: ROUTES.PROFILE,
-          icon: <UserOutlined />,
+          icon: <IdcardOutlined />,
           label: "Profile",
           roles: ["ADMIN", "USER"],
         },
@@ -82,16 +83,52 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
       .find((key: string) => location.pathname.startsWith(key)) || ROUTES.DASHBOARD;
 
   return (
-    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-      <div style={{ padding: "18px 16px", borderBottom: "1px solid #1b3f60" }}>
-        <Typography.Title level={5} style={{ margin: 0, color: "#ffffff" }}>
-          MedBill Pro
-        </Typography.Title>
-        <Typography.Text style={{ color: "#9FB3C8", fontSize: 12 }}>
-          Billing & Inventory
-        </Typography.Text>
+    <div className="medbill-sidebar" style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "16px", borderBottom: "1px solid #1b3f60" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 14,
+              background: "linear-gradient(180deg, #1e7a67 0%, #176254 100%)",
+              display: "grid",
+              placeItems: "center",
+              boxShadow: "0 8px 18px rgba(9, 33, 54, 0.28)",
+              flexShrink: 0,
+            }}
+          >
+            <PlusSquareFilled style={{ color: "#ffffff", fontSize: 20 }} />
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <Typography.Title level={5} style={{ margin: 0, color: "#ffffff", lineHeight: 1.2 }}>
+              MedBill Pro
+            </Typography.Title>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
+              <Typography.Text style={{ color: "#9FB3C8", fontSize: 12 }}>Billing & Inventory</Typography.Text>
+              <span
+                style={{
+                  color: "#A7F3D0",
+                  background: "rgba(22, 163, 74, 0.18)",
+                  border: "1px solid rgba(134, 239, 172, 0.35)",
+                  borderRadius: 999,
+                  padding: "1px 8px",
+                  fontSize: 10,
+                  fontWeight: 600,
+                  letterSpacing: 0.3,
+                }}
+              >
+                {role}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
+      <Typography.Text style={{ color: "#7FA0BE", fontSize: 11, letterSpacing: 1, padding: "10px 16px 4px" }}>
+        MENU
+      </Typography.Text>
       <Menu
+        className="medbill-sidebar-menu"
         theme="dark"
         mode="inline"
         selectedKeys={[selectedKey]}
@@ -100,7 +137,7 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
           navigate(key);
           onNavigate?.();
         }}
-        style={{ borderRight: 0, paddingTop: 8, background: "transparent" }}
+        style={{ borderRight: 0, paddingTop: 6, background: "transparent", paddingInline: 8 }}
       />
     </div>
   );

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCode } from "../common";
 
 export const validate =
-  (schema: any, property: "body" | "params" = "body") =>
+  (schema: any, property: "body" | "params" | "query" = "body") =>
   (req: Request, res: Response, next: NextFunction) => {
     const { error } = schema.validate(req[property], {
       abortEarly: false,

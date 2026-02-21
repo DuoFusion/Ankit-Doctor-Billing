@@ -1,10 +1,12 @@
 import Joi from "joi";
 
+const objectId = Joi.string().pattern(/^[0-9a-fA-F]{24}$/);
+
 /* =========================
    ITEM SCHEMA
 ========================= */
 const billItemSchema = Joi.object({
-  productId: Joi.string().required(),
+  productId: objectId.required(),
 
   qty: Joi.number().positive().required(),
   freeQty: Joi.number().min(0).optional(),
@@ -20,7 +22,7 @@ const billItemSchema = Joi.object({
    CREATE BILL
 ========================= */
 export const createBillSchema = Joi.object({
-  companyId: Joi.string().required(),
+  companyId: objectId.required(),
 
   discount: Joi.number().min(0).optional(),
 
@@ -34,12 +36,14 @@ export const createBillSchema = Joi.object({
    UPDATE BILL
 ========================= */
 export const updateBillSchema = Joi.object({
-  discount: Joi.number().min(0).required(),
-});
+  companyId: objectId.optional(),
+  discount: Joi.number().min(0).optional(),
+  items: Joi.array().items(billItemSchema).min(1).optional(),
+}).min(1);
 
 /* =========================
    ID PARAM
 ========================= */
-export const idParamSchema = Joi.object({
-  id: Joi.string().required(),
+export const billIdParamSchema = Joi.object({
+  id: objectId.required(),
 });

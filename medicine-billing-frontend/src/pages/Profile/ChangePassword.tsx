@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, Typography, App } from "antd";
 import { ROUTES } from "../../Constants";
 import { useChangePassword } from "../../Hooks/useProfile";
+import { passwordMinRule, requiredRule } from "../../Utils/formRules";
 
 const ChangePassword = () => {
   const { message } = App.useApp();
@@ -43,13 +44,28 @@ const ChangePassword = () => {
     <Card style={{ maxWidth: 760, margin: "0 auto" }}>
       <Typography.Title level={4}>Change Password</Typography.Title>
       <Form form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
-        <Form.Item name="oldPassword" label="Current Password" rules={[{ required: true }]}>
+        <Form.Item name="oldPassword" label="Current Password" rules={[requiredRule("Current password"), passwordMinRule]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item name="newPassword" label="New Password" rules={[{ required: true }]}>
+        <Form.Item name="newPassword" label="New Password" rules={[requiredRule("New password"), passwordMinRule]}>
           <Input.Password />
         </Form.Item>
-        <Form.Item name="confirmPassword" label="Confirm New Password" rules={[{ required: true }]}>
+        <Form.Item
+          name="confirmPassword"
+          label="Confirm New Password"
+          dependencies={["newPassword"]}
+          rules={[
+            requiredRule("Confirm password"),
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("newPassword") === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error("Passwords do not match"));
+              },
+            }),
+          ]}
+        >
           <Input.Password />
         </Form.Item>
         <Form.Item style={{ marginBottom: 0 }}>

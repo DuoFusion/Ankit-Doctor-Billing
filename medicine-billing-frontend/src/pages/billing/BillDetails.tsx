@@ -33,6 +33,11 @@ const BillView = () => {
   const userEmail = bill?.userId?.email || (bill as any)?.createdBy?.email || "-";
   const userPhone = bill?.userId?.phone || (bill as any)?.createdBy?.phone || "-";
   const userAddress = bill?.userId?.address || (bill as any)?.createdBy?.address || "-";
+  const subTotal = Number(bill.subTotal || 0);
+  const totalTax = Number(bill.totalTax || 0);
+  const discountAmount = Number(bill.discount || 0);
+  const totalBeforeDiscount = subTotal + totalTax;
+  const grandTotal = Math.max(0, totalBeforeDiscount - discountAmount);
 
   const handleDownloadPdf = async () => {
     if (!printRef.current || !bill) return;
@@ -222,13 +227,19 @@ const BillView = () => {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                     <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>TAX</div>
                     <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      Rs {Number(bill.totalTax || 0).toFixed(2)}
+                      Rs {totalTax.toFixed(2)}
                     </div>
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>DISCOUNT</div>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>TOTAL BEFORE DISCOUNT</div>
                     <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
-                      - Rs {Number(bill.discount || 0).toFixed(2)}
+                      Rs {totalBeforeDiscount.toFixed(2)}
+                    </div>
+                  </div>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12 }}>DISCOUNT AMOUNT</div>
+                    <div style={{ background: INVOICE_ACCENT, color: "#fff", padding: "8px 10px", fontSize: 12, textAlign: "right" }}>
+                      - Rs {discountAmount.toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -237,7 +248,7 @@ const BillView = () => {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                     <Typography.Text style={{ fontWeight: 700, fontSize: 13 }}>GRAND TOTAL</Typography.Text>
                     <Typography.Text style={{ fontWeight: 800, fontSize: 16, color: "#111827" }}>
-                      Rs {Number(bill.grandTotal || 0).toFixed(2)}
+                      Rs {grandTotal.toFixed(2)}
                     </Typography.Text>
                   </div>
                 </div>

@@ -5,6 +5,7 @@ import { useCompanies } from "../../Hooks/useCompanies";
 import { useUpdateProduct, useProduct } from "../../Hooks/useProducts";
 import { ROUTES } from "../../Constants";
 import { useCategoryDropdown } from "../../Hooks/useCategories";
+import { requiredRule } from "../../Utils/formRules";
 
 const UpdateProduct = () => {
   const { message } = App.useApp();
@@ -59,28 +60,28 @@ const UpdateProduct = () => {
     <Card style={{ maxWidth: 820, margin: "0 auto" }}>
       <Typography.Title level={4}>Update Product</Typography.Title>
       <Form form={form} layout="vertical" onFinish={submit} requiredMark={false}>
-        <Form.Item name="name" label="Product Name" rules={[{ required: true }]}>
+        <Form.Item name="name" label="Product Name" rules={[requiredRule("Product name"), { min: 2, message: "Product name must be at least 2 characters" }]}>
           <Input />
         </Form.Item>
 
-        <Form.Item name="category" label="Category" rules={[{ required: true }]}>
+        <Form.Item name="category" label="Category" rules={[requiredRule("Category")]}>
           <Select options={categories.map((c) => ({ value: c.name, label: c.name }))} />
         </Form.Item>
 
-        <Form.Item name="productType" label="Product Type" rules={[{ required: true }]}>
+        <Form.Item name="productType" label="Product Type" rules={[requiredRule("Product type")]}>
           <Input />
         </Form.Item>
 
-        <Form.Item name="companyId" label="Company" rules={[{ required: true }]}>
+        <Form.Item name="companyId" label="Company" rules={[requiredRule("Company")]}>
           <Select options={companies.map((c: any) => ({ value: c._id, label: c.companyName }))} />
         </Form.Item>
 
         <Form.Item label="Pricing" style={{ marginBottom: 0 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <Form.Item name="mrp" label="MRP">
+            <Form.Item name="mrp" label="MRP" rules={[requiredRule("MRP")]}>
               <InputNumber style={{ width: "100%" }} min={0} />
             </Form.Item>
-            <Form.Item name="price" label="Selling Price">
+            <Form.Item name="price" label="Selling Price" rules={[requiredRule("Selling price")]}>
               <InputNumber style={{ width: "100%" }} min={0} />
             </Form.Item>
           </div>
@@ -88,10 +89,10 @@ const UpdateProduct = () => {
 
         <Form.Item label="Tax & Stock" style={{ marginBottom: 0 }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <Form.Item name="taxPercent" label="GST (%)">
-              <InputNumber style={{ width: "100%" }} min={0} />
+            <Form.Item name="taxPercent" label="GST (%)" rules={[requiredRule("GST"), { type: "number", min: 0, max: 100, message: "GST must be between 0 and 100" }]}>
+              <InputNumber style={{ width: "100%" }} min={0} max={100} />
             </Form.Item>
-            <Form.Item name="stock" label="Stock">
+            <Form.Item name="stock" label="Stock" rules={[requiredRule("Stock"), { type: "number", min: 0, message: "Stock cannot be negative" }]}>
               <InputNumber style={{ width: "100%" }} min={0} />
             </Form.Item>
           </div>

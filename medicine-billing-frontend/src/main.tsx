@@ -42,6 +42,38 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             Table: {
               headerBg: "#F8FAFC",
             },
+            Input: {
+              activeBorderColor: "#1E6F5C",
+              hoverBorderColor: "#2A7E6A",
+              colorBorder: "#CBD5E1",
+              colorBgContainer: "#FFFFFF",
+              colorTextPlaceholder: "#94A3B8",
+              controlHeight: 42,
+              paddingInline: 12,
+            },
+            InputNumber: {
+              activeBorderColor: "#1E6F5C",
+              hoverBorderColor: "#2A7E6A",
+              colorBorder: "#CBD5E1",
+              controlHeight: 42,
+            },
+            Select: {
+              activeBorderColor: "#1E6F5C",
+              hoverBorderColor: "#2A7E6A",
+              colorBorder: "#CBD5E1",
+              controlHeight: 42,
+              optionSelectedBg: "#E6F4F1",
+            },
+            DatePicker: {
+              activeBorderColor: "#1E6F5C",
+              hoverBorderColor: "#2A7E6A",
+              colorBorder: "#CBD5E1",
+              controlHeight: 42,
+            },
+            Form: {
+              labelColor: "#334155",
+              labelFontSize: 14,
+            },
           },
         }}
       >

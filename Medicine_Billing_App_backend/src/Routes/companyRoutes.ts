@@ -8,39 +8,45 @@ import {
 } from "../controllers/company";
 import { authMiddleware } from "../middleware/auth.middleware";
 import { upload } from "../middleware/upload.middleware";
+import { validate } from "../middleware/joiMiddleware";
+import {
+  companyIdParamSchema,
+  createCompanySchema,
+  updateCompanySchema,
+} from "../validation";
 
 const router = Router();
 
-// ================= CREATE =================
 router.post(
   "/",
   authMiddleware,
-  upload.single("logo"),   // ✅ allow logo upload
+  upload.single("logo"),
+  validate(createCompanySchema),
   createCompany
 );
 
-router.get(
-  "/",
-  authMiddleware,
-  getAllCompanies
-);
+router.get("/", authMiddleware, getAllCompanies);
 
 router.get(
   "/:id",
   authMiddleware,
+  validate(companyIdParamSchema, "params"),
   getSingleCompany
 );
 
 router.put(
   "/:id",
   authMiddleware,
-  upload.single("logo"), 
+  upload.single("logo"),
+  validate(companyIdParamSchema, "params"),
+  validate(updateCompanySchema),
   updateCompany
 );
 
 router.delete(
   "/:id",
   authMiddleware,
+  validate(companyIdParamSchema, "params"),
   deleteCompany
 );
 

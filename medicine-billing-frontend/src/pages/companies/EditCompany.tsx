@@ -4,6 +4,7 @@ import { Button, Card, Form, Input, Typography, Upload, App } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { ROUTES } from "../../Constants";
 import { useCompanies, useUpdateCompany } from "../../Hooks/useCompanies";
+import { emailRule, gstRule, phoneRule, requiredRule } from "../../Utils/formRules";
 
 const EditCompany = () => {
   const { message } = App.useApp();
@@ -50,22 +51,22 @@ const EditCompany = () => {
     <Card style={{ maxWidth: 820, margin: "0 auto" }}>
       <Typography.Title level={4}>Edit Company</Typography.Title>
       <Form form={form} layout="vertical" onFinish={handleSubmit} requiredMark={false}>
-        <Form.Item name="companyName" label="Company Name" rules={[{ required: true }]}>
+        <Form.Item name="companyName" label="Company Name" rules={[requiredRule("Company name")]}>
           <Input />
         </Form.Item>
-        <Form.Item name="gstNumber" label="GST Number" rules={[{ required: true }]}>
+        <Form.Item name="gstNumber" label="GST Number" rules={[requiredRule("GST number"), gstRule]}>
+          <Input style={{ textTransform: "uppercase" }} />
+        </Form.Item>
+        <Form.Item name="email" label="Email" rules={[emailRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="email" label="Email">
+        <Form.Item name="phone" label="Phone" rules={[phoneRule]}>
           <Input />
         </Form.Item>
-        <Form.Item name="phone" label="Phone">
+        <Form.Item name="state" label="State" rules={[{ max: 80, message: "State must be 80 characters or less" }]}>
           <Input />
         </Form.Item>
-        <Form.Item name="state" label="State">
-          <Input />
-        </Form.Item>
-        <Form.Item name="address" label="Address">
+        <Form.Item name="address" label="Address" rules={[{ max: 500, message: "Address must be 500 characters or less" }]}>
           <Input.TextArea rows={4} />
         </Form.Item>
         <Form.Item label="Logo">

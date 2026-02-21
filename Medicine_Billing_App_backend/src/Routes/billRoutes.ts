@@ -7,14 +7,16 @@ import {
   deleteBill,
 } from "../controllers/bill";
 import { authMiddleware } from "../middleware/auth.middleware";
+import { validate } from "../middleware/joiMiddleware";
+import { billIdParamSchema, createBillSchema, updateBillSchema } from "../validation";
 
 const router = Router();
 router.use(authMiddleware);
 
-router.post("/", createBill);
+router.post("/", validate(createBillSchema), createBill);
 router.get("/", getAllBills);
-router.get("/:id", getBillById);
-router.put("/:id", updateBill);
-router.delete("/:id", deleteBill);
+router.get("/:id", validate(billIdParamSchema, "params"), getBillById);
+router.put("/:id", validate(billIdParamSchema, "params"), validate(updateBillSchema), updateBill);
+router.delete("/:id", validate(billIdParamSchema, "params"), deleteBill);
 
 export default router;

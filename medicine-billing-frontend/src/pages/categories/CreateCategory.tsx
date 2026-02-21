@@ -3,6 +3,7 @@ import { Button, Card, Form, Input, Typography, App } from "antd";
 import axios from "axios";
 import { ROUTES } from "../../Constants";
 import { useCreateCategory } from "../../Hooks/useCategories";
+import { requiredRule } from "../../Utils/formRules";
 
 const CreateCategory = () => {
   const { message } = App.useApp();
@@ -40,12 +41,12 @@ const CreateCategory = () => {
         <Form.Item
           name="name"
           label="Category Name"
-          rules={[{ required: true, message: "Category name is required" }]}
+          rules={[requiredRule("Category name"), { min: 2, message: "Category name must be at least 2 characters" }]}
         >
           <Input placeholder="Enter category name" />
         </Form.Item>
 
-        <Form.Item name="description" label="Description">
+        <Form.Item name="description" label="Description" rules={[{ max: 500, message: "Description cannot exceed 500 characters" }]}>
           <Input.TextArea rows={4} placeholder="Enter description (optional)" />
         </Form.Item>
 

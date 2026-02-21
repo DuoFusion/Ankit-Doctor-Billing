@@ -10,7 +10,7 @@ import {
   Typography,
   App,
 } from "antd";
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, EyeOutlined, LoadingOutlined, PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import { ROLE, ROUTES } from "../../Constants";
 import { useCompanies, useDeleteCompany } from "../../Hooks/useCompanies";
 import { useMe } from "../../Hooks/useMe";
@@ -110,10 +110,11 @@ const CompaniesList = () => {
       }
     >
       <div style={{ marginBottom: 16 }}>
-        <Input.Search
+        <Input
           placeholder="Search company..."
           allowClear
-          loading={searchLoading}
+          prefix={<SearchOutlined />}
+          suffix={searchLoading ? <LoadingOutlined spin /> : null}
           value={filters.search}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
             setFilters({ page: 1, search: e.target.value });
