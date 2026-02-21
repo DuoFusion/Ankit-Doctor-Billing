@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Card, Space, Typography } from "antd";
 import { EditOutlined, FilePdfOutlined } from "@ant-design/icons";
@@ -40,7 +40,7 @@ const BillView = () => {
   const totalBeforeDiscount = subTotal + totalTax;
   const grandTotal = Math.max(0, totalBeforeDiscount - discountAmount);
 
-  const handleDownloadPdf = async () => {
+  const handleDownloadPdf = useCallback(async () => {
     if (!printRef.current || !bill) return;
     const html2pdf = (await import("html2pdf.js")).default;
 
@@ -55,7 +55,7 @@ const BillView = () => {
       } as any)
       .from(printRef.current)
       .save();
-  };
+  }, [bill]);
 
   useEffect(() => {
     const shouldAutoDownload =
@@ -67,7 +67,7 @@ const BillView = () => {
 
     autoDownloadTriggered.current = true;
     void handleDownloadPdf();
-  }, [location.search, bill]);
+  }, [location.search, data, handleDownloadPdf]);
 
   if (!isValidBillId) {
     return (
